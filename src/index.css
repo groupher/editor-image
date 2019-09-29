@@ -6,7 +6,6 @@
   &__image {
     border-radius: 3px;
     overflow: hidden;
-    margin-bottom: 10px;
     display: flex;
     justify-content: center;
 
@@ -132,8 +131,13 @@
   }
 
   &__caption {
+    border: none;
+    text-align: center;
+    color: grey;
+
     &[contentEditable=true][data-placeholder]::before{
       position: absolute;
+      margin-left: -60px;
       content: attr(data-placeholder);
       color: #707684;
       font-weight: normal;
