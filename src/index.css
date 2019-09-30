@@ -16,10 +16,10 @@
       &-infolabel {
         position: absolute;
         top: 20px;
-        left: 40%;
+        left: calc(50% - 80px);
         z-index: 2;
         height: 21px;
-        min-width: 150px;
+        min-width: 160px;
         padding: 0 10px;
         background: #444444;
         border-radius: 5px;
