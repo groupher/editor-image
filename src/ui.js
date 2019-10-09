@@ -19,6 +19,7 @@ export default class Ui {
    */
   constructor({ api, config, onSelectFile }) {
     this.api = api;
+    this.i18n = config.i18n || 'en'
     this.config = config;
     this.onSelectFile = onSelectFile;
     this.nodes = {
@@ -128,8 +129,9 @@ export default class Ui {
    */
   createFileButton() {
     let button = make('div', [ this.CSS.button ]);
+    const selectText = this.i18n === 'en' ? 'Select an Image': '选择图片'
 
-    button.innerHTML = this.config.buttonContent || `${buttonIcon} Select an Image`;
+    button.innerHTML = this.config.buttonContent || `${buttonIcon} ${selectText}`;
 
     button.addEventListener('click', () => {
       this.onSelectFile();
