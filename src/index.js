@@ -84,7 +84,7 @@ export default class ImageTool {
   static get toolbox() {
     return {
       icon: ToolboxIcon,
-      title: 'Image'
+      title: this.i18n === 'en' ? 'Image' : '图片'
     };
   }
 
@@ -95,6 +95,7 @@ export default class ImageTool {
    */
   constructor({ data, config, api }) {
     this.api = api;
+    this.i18n = config.i18n || 'en'
 
     /**
      * Tool's initial config
