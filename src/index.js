@@ -106,7 +106,8 @@ export default class ImageTool {
       types: config.types || 'image/*',
       captionPlaceholder: config.captionPlaceholder || 'Caption',
       buttonContent: config.buttonContent || '',
-      uploader: config.uploader || undefined
+      uploader: config.uploader || undefined,
+      i18n: config.i18n || 'en'
     };
 
     /**
