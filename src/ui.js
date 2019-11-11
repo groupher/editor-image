@@ -252,7 +252,8 @@ export default class Ui {
     let labelInfoTimer = null;
 
     // eslint-disable-next-line no-undef
-    interact(this.nodes.imageEl)
+    // interact(this.nodes.imageEl)
+    interact(this.nodes.imageWrapper)
       .resizable({
         edges: {
           top: true, // Use pointer coords to check for resize.

@@ -12,6 +12,12 @@
     &-wrapper {
       position: relative;
       border: 1px solid transparent;
+      padding: 2px;
+
+      &:hover {
+        border: 1px dotted;
+        border-color: #47c0ff;
+      }
 
       &-infolabel {
         position: absolute;
@@ -21,6 +27,7 @@
         height: 21px;
         min-width: 160px;
         padding: 0 10px;
+        padding-top: 3px;
         background: #444444;
         border-radius: 5px;
         color: #f3f3f3;
@@ -32,65 +39,60 @@
         transition: opacity 0.5s;
       }
 
-      &:hover {
-        border: 1px solid #47c0ff;
-        border-color: #47c0ff; 
-      }
-
       &:hover &-topleft-dragger {
         position: absolute;
-        cursor: ew-resize;
+        cursor: inherit;
         z-index: 1;
-        top: -6px;
-        left: -6px;
+        top: -2px;
+        left: -2px;
         width: 8px;
         height: 8px;
-        border-radius: 20%;
+        border-radius: 50%;
         background: #47c0ff;
-        border: 3px solid white;
-        border-top-left-radius: unset;
+        border: 1px solid;
+        border-color: white;
       }
 
       &:hover &-topright-dragger {
         position: absolute;
-        cursor: ew-resize;
+        cursor: inherit;
         z-index: 1;
-        top: -6px;
-        right: -6px;
+        top: -2px;
+        right: -2px;
         width: 8px;
         height: 8px;
-        border-radius: 20%;
+        border-radius: 50%;
         background: #47c0ff;
-        border: 3px solid white;
-        border-top-right-radius: unset;
+        border: 1px solid;
+        border-color: white;
       }
 
       &:hover &-bottomleft-dragger {
         position: absolute;
-        cursor: ew-resize;
+        cursor: inherit;
         z-index: 1;
-        bottom: -6px;
-        left: -6px;
+        bottom: -2px;
+        left: -2px;
         width: 8px;
         height: 8px;
-        border-radius: 20%;
+        border-radius: 50%;
         background: #47c0ff;
-        border: 3px solid white;
-        border-bottom-left-radius: unset;
+        border: 1px solid;
+        border-color: white;
       }
 
       &:hover &-bottomright-dragger {
         position: absolute;
-        cursor: ew-resize;
+        cursor: inherit;
         z-index: 1;
-        bottom: -6px;
-        right: -6px;
+        bottom: -2px;
+        right: -2px;
         width: 8px;
         height: 8px;
-        border-radius: 20%;
+        border-radius: 50%;
         background: #47c0ff;
-        border: 3px solid white;
-        border-bottom-right-radius: unset;
+        border: 1px solid;
+        border-color: white;
       }
     }
 
@@ -203,31 +205,7 @@
    * ----------------
    */
 
-  &--withBorder {
-    ^&__image {
-      border: 1px solid var(--border-color);
-    }
-  }
-
-  &--withBackground {
-    ^&__image {
-      padding: 15px;
-      background: var(--bg-color);
-
-      &-picture {
-        max-width: 60%;
-        margin: 0 auto;
-      }
-    }
-  }
-
-  &--stretched {
-    ^&__image {
-      &-picture {
-        width: 100%;
-      }
-    }
-  }
+  
 }
 
 .opacity-08 {
