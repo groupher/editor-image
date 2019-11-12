@@ -42,7 +42,7 @@
 // eslint-disable-next-line
 import css from './index.css';
 import Ui from './ui';
-import ToolboxIcon from './svg/toolbox.svg';
+import ToolboxIcon from './icon/toolbox.svg';
 import Uploader from './uploader';
 
 /**
@@ -152,6 +152,16 @@ export default class ImageTool {
   }
 
   /**
+   * Renders Settings panel
+   * @public
+   *
+   * @return {HTMLDivElement}
+   */
+  renderSettings() {
+    return this.ui.renderSettings();
+  }
+
+  /**
    * Return Block data
    * @public
    *
@@ -184,7 +194,7 @@ export default class ImageTool {
       /**
        * Paste HTML into Editor
        */
-      tags: [ 'img' ],
+      tags: ['img'],
 
       /**
        * Paste URL of image into the Editor
@@ -197,7 +207,7 @@ export default class ImageTool {
        * Drag n drop file from into the Editor
        */
       files: {
-        mimeTypes: [ 'image/*' ]
+        mimeTypes: ['image/*']
       }
     };
   }

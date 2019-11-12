@@ -1,6 +1,10 @@
-import buttonIcon from './svg/button-icon.svg';
+import ButtonIcon from './icon/button-icon.svg';
 import { loadJS } from './utils';
 // import interact from 'interactjs';
+
+import ResetIcon from './icon/reset.svg'
+import RotateIcon from './icon/rotate.svg'
+import DownloadIcon from './icon/download.svg'
 
 const resizeScript = 'https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js';
 const zoomScript = 'https://cdn.jsdelivr.net/npm/medium-zoom@1.0.4/dist/medium-zoom.min.js';
@@ -22,9 +26,25 @@ export default class Ui {
     this.i18n = config.i18n || 'en'
     this.config = config;
     this.onSelectFile = onSelectFile;
+
+    this.settings = [
+      {
+        title: '原始尺寸',
+        icon: ResetIcon,
+      },
+      {
+        title: '旋转图片',
+        icon: RotateIcon,
+      },
+      {
+        title: '下载原图',
+        icon: DownloadIcon,
+      },
+    ]
+
     this.nodes = {
       wrapper: make('div', [this.CSS.baseClass, this.CSS.wrapper]),
-      imageContainer: make('div', [ this.CSS.imageContainer ]),
+      imageContainer: make('div', [this.CSS.imageContainer]),
       fileButton: this.createFileButton(),
       imageWrapper: undefined,
       imageTopLeftDragger: undefined,
@@ -90,7 +110,10 @@ export default class Ui {
       imageBottomLeftDragger: 'image-tool__image-wrapper-bottomleft-dragger',
       imageBottomRightDragger: 'image-tool__image-wrapper-bottomright-dragger',
       imageEl: 'image-tool__image-picture',
-      caption: 'image-tool__caption'
+      caption: 'image-tool__caption',
+
+      settingsWrapper: 'cdx-settings-panel',
+      settingsButton: this.api.styles.settingsButton,
     };
   };
 
@@ -124,14 +147,42 @@ export default class Ui {
   }
 
   /**
+   * Renders Settings panel
+   * @public
+   *
+   * @return {HTMLDivElement}
+   */
+  renderSettings() {
+    const wrapper = make('div', [this.CSS.settingsWrapper], {});
+
+    this.settings.forEach((item) => {
+      const itemEl = make('div', [this.CSS.settingsButton], {
+        title: item.title,
+        innerHTML: item.icon
+      });
+
+      // if (this._data.type === item.name) this.highlightSettingIcon(itemEl)
+
+      itemEl.addEventListener('click', () => {
+        // this.setCenterIcon(item.name);
+        // this.highlightSettingIcon(itemEl)
+      });
+
+      wrapper.appendChild(itemEl);
+    });
+
+    return wrapper;
+  }
+
+  /**
    * Creates upload-file button
    * @return {Element}
    */
   createFileButton() {
-    let button = make('div', [ this.CSS.button ]);
-    const selectText = this.i18n === 'en' ? 'Select an Image': '选择图片'
+    let button = make('div', [this.CSS.button]);
+    const selectText = this.i18n === 'en' ? 'Select an Image' : '选择图片'
 
-    button.innerHTML = this.config.buttonContent || `${buttonIcon} ${selectText}`;
+    button.innerHTML = this.config.buttonContent || `${ButtonIcon} ${selectText}`;
 
     button.addEventListener('click', () => {
       this.onSelectFile();
@@ -307,7 +358,7 @@ export default class Ui {
    */
   labelInfoHTML(height, width) {
     return '<span class="opacity-08">h:&nbsp;</span>' + parseInt(height) + '<span class="opacity-08">&nbsp;px</span>' + '&nbsp;&nbsp;/&nbsp;&nbsp;' +
-    '<span class="opacity-08">w:&nbsp;</span>' + parseInt(width) + '<span class="opacity-08">&nbsp;px</span>';
+      '<span class="opacity-08">w:&nbsp;</span>' + parseInt(width) + '<span class="opacity-08">&nbsp;px</span>';
   }
 
   /**
