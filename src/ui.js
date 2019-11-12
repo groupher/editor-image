@@ -7,7 +7,6 @@ import RotateIcon from './icon/rotate.svg'
 import DownloadIcon from './icon/download.svg'
 
 const resizeScript = 'https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js';
-const zoomScript = 'https://cdn.jsdelivr.net/npm/medium-zoom@1.0.4/dist/medium-zoom.min.js';
 
 /**
  * Class for working with UI:
@@ -58,11 +57,6 @@ export default class Ui {
         contentEditable: true
       })
     };
-    /**
-     * zoom iamge like medium
-     *
-    */
-    this.imageZoomer = null;
 
     /**
      * image ratio, to keep image shape when resize
@@ -239,7 +233,6 @@ export default class Ui {
      * Add load event listener
      */
     this.nodes.imageEl.addEventListener('load', this.imageOnLoad.bind(this));
-    this.nodes.imageEl.addEventListener('click', this.imageOnClick.bind(this));
 
     /**
      * Add resize event listener
@@ -260,7 +253,6 @@ export default class Ui {
   */
   imageOnLoad() {
     loadJS(resizeScript, this.initResizeHandler.bind(this), document.body);
-    loadJS(zoomScript, this.initZoomHandler.bind(this), document.body);
 
     this.toggleStatus(Ui.status.FILLED);
     // eslint-disable-next-line no-undef
@@ -273,28 +265,6 @@ export default class Ui {
     }
   }
 
-  /**
-   * NOTE:  this is an hack solution
-   * the resize event will triggle click event after dragend
-   * resize 在 end 的时候会误触发 click, 导致 zoom 被激活
-  */
-  imageOnClick() {
-    const labelOpacity = this.nodes.imageInfoLabel.style.opacity;
-
-    if (!labelOpacity || labelOpacity === '0') {
-      if (this.imageZoomer) this.imageZoomer.toggle();
-    }
-  }
-
-  /**
-   * init zoom picture
-   *
-   * @memberof Ui
-   */
-  initZoomHandler() {
-    // eslint-disable-next-line no-undef
-    this.imageZoomer = mediumZoom(this.nodes.imageEl);
-  }
   /**
    * resize the picture
    */
