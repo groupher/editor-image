@@ -44,6 +44,7 @@ import css from './index.css';
 import Ui from './ui';
 import ToolboxIcon from './icon/toolbox.svg';
 import Uploader from './uploader';
+import { debounce } from './utils'
 
 /**
  * @typedef {object} ImageConfig
@@ -131,7 +132,11 @@ export default class ImageTool {
             this.ui.showPreloader(src);
           }
         });
-      }
+      },
+      onStyleChange: debounce((style) => {
+        this.data.style = Object.assign(this.data.style || {}, style)
+        // console.log('this.data: ', this.data)
+      }, 200)
     });
 
     /**

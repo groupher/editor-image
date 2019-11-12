@@ -20,22 +20,31 @@ export default class Ui {
    * @param {ImageConfig} config - user config
    * @param {function} onSelectFile - callback for clicks on Select file buttor
    */
-  constructor({ api, config, onSelectFile }) {
+  constructor({ api, config, onSelectFile, onStyleChange }) {
     this.api = api;
     this.i18n = config.i18n || 'en'
     this.config = config;
     this.onSelectFile = onSelectFile;
+    this.onStyleChange = onStyleChange;
+
+    this.imageUrl = ''
+
+    this.initWidth = '100%'
+    this.initHeight = 'auto'
 
     this.settings = [
       {
+        name: 'reset',
         title: '原始尺寸',
         icon: ResetIcon,
       },
       {
+        name: 'rotate',
         title: '旋转图片',
         icon: RotateIcon,
       },
       {
+        name: 'download',
         title: '下载原图',
         icon: DownloadIcon,
       },
@@ -55,6 +64,12 @@ export default class Ui {
       imagePreloader: make('div', this.CSS.imagePreloader),
       caption: make('div', [this.CSS.input, this.CSS.caption], {
         contentEditable: true
+      }),
+      downloadLinkEl: make('a', ['hello'], {
+        href: "",
+        target: "_blank",
+        download: true,
+        rel: "noreferrer",
       })
     };
 
@@ -155,17 +170,86 @@ export default class Ui {
         innerHTML: item.icon
       });
 
-      // if (this._data.type === item.name) this.highlightSettingIcon(itemEl)
-
-      itemEl.addEventListener('click', () => {
-        // this.setCenterIcon(item.name);
-        // this.highlightSettingIcon(itemEl)
-      });
+      itemEl.addEventListener('click', () =>
+        this.handleSettingAction(item)
+      );
 
       wrapper.appendChild(itemEl);
     });
 
+    wrapper.appendChild(this.nodes.downloadLinkEl);
     return wrapper;
+  }
+
+  /**
+   * handle image settings
+   * @return {Boolean}
+   */
+  handleSettingAction(setting) {
+    if (setting.name === 'reset') {
+      return this.handleSettingActionReset()
+    }
+    if (setting.name === 'rotate') {
+      return this.handleSettingActionRotate()
+    }
+    if (setting.name === 'download') {
+      return this.handleSettingActionDownload()
+    }
+
+    return false
+  }
+
+  /**
+   * handle image reset to full size
+   * @return {Boolean}
+   */
+  handleSettingActionReset() {
+    this.nodes.imageWrapper.style.width = this.initWidth
+    this.nodes.imageWrapper.style.height = this.initHeight
+
+    this.onStyleChange({
+      width: this.initWidth,
+      height: this.initHeight,
+    });
+
+    this.api.toolbar.close();
+    return false
+  }
+
+  /**
+   * handle image rotate
+   * @return {Boolean}
+   */
+  handleSettingActionRotate() {
+    let transform = ''
+
+    const currentTransForm = this.nodes.imageEl.style.transform
+    if (!currentTransForm || currentTransForm === '') {
+      transform = 'rotate(90deg)'
+    } else if (currentTransForm === 'rotate(90deg)') {
+      transform = 'rotate(180deg)'
+    } else if (currentTransForm === 'rotate(180deg)') {
+      transform = 'rotate(270deg)'
+    } else {
+      transform = ''
+    }
+
+    this.onStyleChange({ transform });
+
+    this.nodes.imageEl.style.transform = transform
+    return false
+  }
+
+  /**
+   * handle image download
+   * @return {Boolean}
+   */
+  handleSettingActionDownload() {
+    this.nodes.downloadLinkEl.href = this.imageUrl
+    this.nodes.downloadLinkEl.click()
+    this.api.toolbar.close();
+
+    return false
   }
 
   /**
@@ -217,6 +301,7 @@ export default class Ui {
       src: url
     };
 
+    this.imageUrl = url
     /**
      * Compose tag with defined attributes
      * @type {Element}
@@ -315,6 +400,11 @@ export default class Ui {
           width: `${dragWidth}px`,
           height: `${dragHeight}px`,
           transform: `translate(${event.deltaRect.left}px, ${event.deltaRect.top}px)`
+        });
+
+        this.onStyleChange({
+          width: dragWidth,
+          height: dragHeight,
         });
 
         Object.assign(event.target.dataset, { x, y });
