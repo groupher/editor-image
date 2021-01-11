@@ -2,7 +2,7 @@
  * Image Tool for the Editor.js
  * @author CodeX <team@ifmo.su>
  * @license MIT
- * @see {@link https://github.com/editor-js/image}
+ * @see {@link https://github.com/groupher/editor-image}
  *
  * To developers.
  * To simplify Tool structure, we split it to 4 parts:
@@ -40,11 +40,11 @@
  */
 
 // eslint-disable-next-line
-import css from './index.css';
-import Ui from './ui';
-import ToolboxIcon from './icon/toolbox.svg';
-import Uploader from './uploader';
-import { debounce } from './utils'
+import css from "./index.css";
+import UI from "./ui";
+import ToolboxIcon from "./icon/toolbox.svg";
+import Uploader from "./uploader";
+import { debounce } from "./utils";
 
 /**
  * @typedef {object} ImageConfig
@@ -62,6 +62,9 @@ import { debounce } from './utils'
  * @property {function(File): Promise.<UploadResponseFormat>} [uploader.uploadByFile] - method that upload image by File
  * @property {function(string): Promise.<UploadResponseFormat>} [uploader.uploadByUrl] - method that upload image by URL
  */
+
+const TMP_PIC =
+  "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1556276808-32fa466c5df8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80";
 
 /**
  * @typedef {object} UploadResponseFormat
@@ -83,7 +86,7 @@ export default class ImageTool {
   static get toolbox() {
     return {
       icon: ToolboxIcon,
-      title: this.i18n === 'en' ? 'Image' : '图片'
+      title: this.i18n === "en" ? "Image" : "图片",
     };
   }
 
@@ -94,21 +97,21 @@ export default class ImageTool {
    */
   constructor({ data, config, api }) {
     this.api = api;
-    this.i18n = config.i18n || 'en'
+    this.i18n = config.i18n || "en";
 
     /**
      * Tool's initial config
      */
     this.config = {
-      endpoints: config.endpoints || '',
+      endpoints: config.endpoints || "",
       additionalRequestData: config.additionalRequestData || {},
       additionalRequestHeaders: config.additionalRequestHeaders || {},
-      field: config.field || 'image',
-      types: config.types || 'image/*',
-      captionPlaceholder: config.captionPlaceholder || 'Caption',
-      buttonContent: config.buttonContent || '',
+      field: config.field || "image",
+      types: config.types || "image/*",
+      captionPlaceholder: config.captionPlaceholder || "Caption",
+      buttonContent: config.buttonContent || "",
       uploader: config.uploader || undefined,
-      i18n: config.i18n || 'en'
+      i18n: config.i18n || "en",
     };
 
     /**
@@ -117,33 +120,44 @@ export default class ImageTool {
     this.uploader = new Uploader({
       config: this.config,
       onUpload: (response) => this.onUpload(response),
-      onError: (error) => this.uploadingFailed(error)
+      onError: (error) => this.uploadingFailed(error),
     });
+    console.log("> 0");
 
     /**
      * Module for working with UI
      */
-    this.ui = new Ui({
+    this.ui = new UI({
       api,
       config: this.config,
       onSelectFile: () => {
         this.uploader.uploadSelectedFile({
           onPreview: (src) => {
             this.ui.showPreloader(src);
-          }
+          },
         });
       },
       onStyleChange: debounce((style) => {
-        this.data.style = Object.assign(this.data.style || {}, style)
+        this._data.style = Object.assign(this._data.style || {}, style);
         // console.log('this.data: ', this.data)
-      }, 200)
+      }, 200),
     });
+    console.log("> 1: ", this.ui);
 
     /**
      * Set saved state
      */
-    this._data = {};
-    this.data = data;
+    this._data = {
+      file: {
+        url: TMP_PIC,
+      },
+    };
+    console.log("> 2");
+    // this.data = {
+    //   file: {
+    //     url: TMP_PIC,
+    //   },
+    // };
   }
 
   /**
@@ -153,7 +167,8 @@ export default class ImageTool {
    * @return {HTMLDivElement}
    */
   render() {
-    return this.ui.render(this.data);
+    console.log("# hello? ");
+    return this.ui.render(this._data);
   }
 
   /**
@@ -177,7 +192,8 @@ export default class ImageTool {
 
     this._data.caption = caption.innerHTML;
 
-    return this.data;
+    console.log("# saving: ", this._data);
+    return this._data;
   }
 
   /**
@@ -199,21 +215,21 @@ export default class ImageTool {
       /**
        * Paste HTML into Editor
        */
-      tags: ['img'],
+      tags: ["img"],
 
       /**
        * Paste URL of image into the Editor
        */
       patterns: {
-        image: /https?:\/\/\S+\.(gif|jpe?g|tiff|png)$/i
+        image: /https?:\/\/\S+\.(gif|jpe?g|tiff|png)$/i,
       },
 
       /**
        * Drag n drop file from into the Editor
        */
       files: {
-        mimeTypes: ['image/*']
-      }
+        mimeTypes: ["image/*"],
+      },
     };
   }
 
@@ -225,7 +241,7 @@ export default class ImageTool {
    */
   async onPaste(event) {
     switch (event.type) {
-      case 'tag':
+      case "tag":
         const image = event.detail.data;
 
         /** Images from PDF */
@@ -240,13 +256,13 @@ export default class ImageTool {
         this.uploadUrl(image.src);
         break;
 
-      case 'pattern':
+      case "pattern":
         const url = event.detail.data;
 
         this.uploadUrl(url);
         break;
 
-      case 'file':
+      case "file":
         const file = event.detail.file;
 
         this.uploadFile(file);
@@ -266,11 +282,10 @@ export default class ImageTool {
    * @param {ImageToolData} data
    */
   set data(data) {
-    this.image = data.file;
+    this.image = this._data.file;
 
-    this._data.caption = data.caption || '';
+    this._data.caption = this._data.caption || "";
     this.ui.fillCaption(this._data.caption);
-
   }
 
   /**
@@ -307,7 +322,7 @@ export default class ImageTool {
     if (response.success && response.file) {
       this.image = response.file;
     } else {
-      this.uploadingFailed('incorrect response: ' + JSON.stringify(response));
+      this.uploadingFailed("incorrect response: " + JSON.stringify(response));
     }
   }
 
@@ -318,11 +333,11 @@ export default class ImageTool {
    * @param {string} errorText
    */
   uploadingFailed(errorText) {
-    console.log('Image Tool: uploading failed because of', errorText);
+    console.log("Image Tool: uploading failed because of", errorText);
 
     this.api.notifier.show({
-      message: 'Can not upload an image, try another',
-      style: 'error'
+      message: "Can not upload an image, try another",
+      style: "error",
     });
     this.ui.hidePreloader();
   }
@@ -336,7 +351,7 @@ export default class ImageTool {
     this.uploader.uploadByFile(file, {
       onPreview: (src) => {
         this.ui.showPreloader(src);
-      }
+      },
     });
   }
 

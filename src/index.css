@@ -1,7 +1,7 @@
 .image-tool {
-  --bg-color: #CDD1E0;
-  --front-color: #388AE5;
-  --border-color: #E8E8EB;
+  --bg-color: #cdd1e0;
+  --front-color: #388ae5;
+  --border-color: #e8e8eb;
 
   &__image {
     border-radius: 3px;
@@ -114,7 +114,7 @@
       background-position: center center;
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         z-index: 3;
         width: 60px;
@@ -137,7 +137,7 @@
     text-align: center;
     color: grey;
 
-    &[contentEditable=true][data-placeholder]::before{
+    &[contentEditable="true"][data-placeholder]::before {
       position: absolute;
       margin-left: -60px;
       content: attr(data-placeholder);
@@ -146,17 +146,16 @@
       opacity: 0;
     }
 
-    &[contentEditable=true][data-placeholder]:empty {
-
+    &[contentEditable="true"][data-placeholder]:empty {
       &::before {
         opacity: 1;
       }
 
       &:focus::before {
-         opacity: 0;
+        opacity: 0;
       }
     }
-   }
+  }
 
   &--empty {
     ^&__image {
@@ -204,13 +203,10 @@
    * Tunes
    * ----------------
    */
-  
 }
 
 .cdx-settings-panel {
   display: flex;
-  border-bottom: 1px solid;
-  border-bottom-color: lightgrey;
   padding-bottom: 3px;
   max-width: 120px;
   flex-wrap: wrap;

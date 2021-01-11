@@ -1,20 +1,23 @@
-import ButtonIcon from './icon/button-icon.svg';
-import { loadJS } from './utils';
+import ButtonIcon from "./icon/button-icon.svg";
+import { loadJS } from "./utils";
 // import interact from 'interactjs';
 
-import ResetIcon from './icon/reset.svg'
-import RotateIcon from './icon/rotate.svg'
-import DownloadIcon from './icon/download.svg'
+import ResetIcon from "./icon/reset.svg";
+import RotateIcon from "./icon/rotate.svg";
+import DownloadIcon from "./icon/download.svg";
 
-const resizeScript = 'https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js';
+const resizeScript =
+  "https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js";
 
+const TMP_PIC =
+  "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1556276808-32fa466c5df8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80";
 /**
  * Class for working with UI:
  *  - rendering base structure
  *  - show/hide preview
  *  - apply tune view
  */
-export default class Ui {
+export default class UI {
   /**
    * @param {object} api - Editor.js API
    * @param {ImageConfig} config - user config
@@ -22,37 +25,37 @@ export default class Ui {
    */
   constructor({ api, config, onSelectFile, onStyleChange }) {
     this.api = api;
-    this.i18n = config.i18n || 'en'
+    this.i18n = config.i18n || "en";
     this.config = config;
     this.onSelectFile = onSelectFile;
     this.onStyleChange = onStyleChange;
 
-    this.imageUrl = ''
+    this.imageUrl = "";
 
-    this.initWidth = '100%'
-    this.initHeight = 'auto'
+    this.initWidth = "100%";
+    this.initHeight = "auto";
 
     this.settings = [
       {
-        name: 'reset',
-        title: '原始尺寸',
+        name: "reset",
+        title: "原始尺寸",
         icon: ResetIcon,
       },
       {
-        name: 'rotate',
-        title: '旋转图片',
+        name: "rotate",
+        title: "旋转图片",
         icon: RotateIcon,
       },
       {
-        name: 'download',
-        title: '下载原图',
+        name: "download",
+        title: "下载原图",
         icon: DownloadIcon,
       },
-    ]
+    ];
 
     this.nodes = {
-      wrapper: make('div', [this.CSS.baseClass, this.CSS.wrapper]),
-      imageContainer: make('div', [this.CSS.imageContainer]),
+      wrapper: make("div", [this.CSS.baseClass, this.CSS.wrapper]),
+      imageContainer: make("div", [this.CSS.imageContainer]),
       fileButton: this.createFileButton(),
       imageWrapper: undefined,
       imageTopLeftDragger: undefined,
@@ -61,21 +64,21 @@ export default class Ui {
       imageBottomLeftDragger: undefined,
       imageBottomRightDragger: undefined,
       imageEl: undefined,
-      imagePreloader: make('div', this.CSS.imagePreloader),
-      caption: make('div', [this.CSS.input, this.CSS.caption], {
-        contentEditable: true
+      imagePreloader: make("div", this.CSS.imagePreloader),
+      caption: make("div", [this.CSS.input, this.CSS.caption], {
+        contentEditable: true,
       }),
-      downloadLinkEl: make('a', ['hello'], {
+      downloadLinkEl: make("a", ["hello"], {
         href: "",
         target: "_blank",
         download: true,
         rel: "noreferrer",
-      })
+      }),
     };
 
     /**
      * image ratio, to keep image shape when resize
-    */
+     */
     this.imageRatio = 1;
 
     /**
@@ -109,25 +112,25 @@ export default class Ui {
       /**
        * Tool's classes
        */
-      wrapper: 'image-tool',
-      imageContainer: 'image-tool__image',
-      imagePreloader: 'image-tool__image-preloader',
-      imageWrapper: 'image-tool__image-wrapper',
-      imageInfoLabel: 'image-tool__image-wrapper-infolabel',
-      imageTopLeftDragger: 'image-tool__image-wrapper-topleft-dragger',
-      imageTopRightDragger: 'image-tool__image-wrapper-topright-dragger',
-      imageBottomLeftDragger: 'image-tool__image-wrapper-bottomleft-dragger',
-      imageBottomRightDragger: 'image-tool__image-wrapper-bottomright-dragger',
-      imageEl: 'image-tool__image-picture',
-      caption: 'image-tool__caption',
+      wrapper: "image-tool",
+      imageContainer: "image-tool__image",
+      imagePreloader: "image-tool__image-preloader",
+      imageWrapper: "image-tool__image-wrapper",
+      imageInfoLabel: "image-tool__image-wrapper-infolabel",
+      imageTopLeftDragger: "image-tool__image-wrapper-topleft-dragger",
+      imageTopRightDragger: "image-tool__image-wrapper-topright-dragger",
+      imageBottomLeftDragger: "image-tool__image-wrapper-bottomleft-dragger",
+      imageBottomRightDragger: "image-tool__image-wrapper-bottomright-dragger",
+      imageEl: "image-tool__image-picture",
+      caption: "image-tool__caption",
 
-      settingsWrapper: 'cdx-settings-panel',
+      settingsWrapper: "cdx-settings-panel",
       settingsButton: this.api.styles.settingsButton,
     };
-  };
+  }
 
   /**
-   * Ui statuses:
+   * UI statuses:
    * - empty
    * - uploading
    * - filled
@@ -135,9 +138,9 @@ export default class Ui {
    */
   static get status() {
     return {
-      EMPTY: 'empty',
-      UPLOADING: 'loading',
-      FILLED: 'filled'
+      EMPTY: "empty",
+      UPLOADING: "loading",
+      FILLED: "filled",
     };
   }
 
@@ -146,10 +149,13 @@ export default class Ui {
    * @return {HTMLDivElement}
    */
   render(toolData) {
+    console.log("ui render: ", toolData);
     if (!toolData.file || Object.keys(toolData.file).length === 0) {
-      this.toggleStatus(Ui.status.EMPTY);
+      this.toggleStatus(UI.status.EMPTY);
     } else {
-      this.toggleStatus(Ui.status.UPLOADING);
+      // this.toggleStatus(UI.status.UPLOADING);
+      this.toggleStatus(UI.status.FILLED);
+      this.fillImage(toolData.url);
     }
 
     return this.nodes.wrapper;
@@ -162,17 +168,15 @@ export default class Ui {
    * @return {HTMLDivElement}
    */
   renderSettings() {
-    const wrapper = make('div', [this.CSS.settingsWrapper], {});
+    const wrapper = make("div", [this.CSS.settingsWrapper], {});
 
     this.settings.forEach((item) => {
-      const itemEl = make('div', [this.CSS.settingsButton], {
+      const itemEl = make("div", [this.CSS.settingsButton], {
         title: item.title,
-        innerHTML: item.icon
+        innerHTML: item.icon,
       });
 
-      itemEl.addEventListener('click', () =>
-        this.handleSettingAction(item)
-      );
+      itemEl.addEventListener("click", () => this.handleSettingAction(item));
 
       wrapper.appendChild(itemEl);
     });
@@ -186,17 +190,17 @@ export default class Ui {
    * @return {Boolean}
    */
   handleSettingAction(setting) {
-    if (setting.name === 'reset') {
-      return this.handleSettingActionReset()
+    if (setting.name === "reset") {
+      return this.handleSettingActionReset();
     }
-    if (setting.name === 'rotate') {
-      return this.handleSettingActionRotate()
+    if (setting.name === "rotate") {
+      return this.handleSettingActionRotate();
     }
-    if (setting.name === 'download') {
-      return this.handleSettingActionDownload()
+    if (setting.name === "download") {
+      return this.handleSettingActionDownload();
     }
 
-    return false
+    return false;
   }
 
   /**
@@ -204,8 +208,8 @@ export default class Ui {
    * @return {Boolean}
    */
   handleSettingActionReset() {
-    this.nodes.imageWrapper.style.width = this.initWidth
-    this.nodes.imageWrapper.style.height = this.initHeight
+    this.nodes.imageWrapper.style.width = this.initWidth;
+    this.nodes.imageWrapper.style.height = this.initHeight;
 
     this.onStyleChange({
       width: this.initWidth,
@@ -213,7 +217,7 @@ export default class Ui {
     });
 
     this.api.toolbar.close();
-    return false
+    return false;
   }
 
   /**
@@ -221,23 +225,23 @@ export default class Ui {
    * @return {Boolean}
    */
   handleSettingActionRotate() {
-    let transform = ''
+    let transform = "";
 
-    const currentTransForm = this.nodes.imageEl.style.transform
-    if (!currentTransForm || currentTransForm === '') {
-      transform = 'rotate(90deg)'
-    } else if (currentTransForm === 'rotate(90deg)') {
-      transform = 'rotate(180deg)'
-    } else if (currentTransForm === 'rotate(180deg)') {
-      transform = 'rotate(270deg)'
+    const currentTransForm = this.nodes.imageEl.style.transform;
+    if (!currentTransForm || currentTransForm === "") {
+      transform = "rotate(90deg)";
+    } else if (currentTransForm === "rotate(90deg)") {
+      transform = "rotate(180deg)";
+    } else if (currentTransForm === "rotate(180deg)") {
+      transform = "rotate(270deg)";
     } else {
-      transform = ''
+      transform = "";
     }
 
     this.onStyleChange({ transform });
 
-    this.nodes.imageEl.style.transform = transform
-    return false
+    this.nodes.imageEl.style.transform = transform;
+    return false;
   }
 
   /**
@@ -245,11 +249,11 @@ export default class Ui {
    * @return {Boolean}
    */
   handleSettingActionDownload() {
-    this.nodes.downloadLinkEl.href = this.imageUrl
-    this.nodes.downloadLinkEl.click()
+    this.nodes.downloadLinkEl.href = this.imageUrl;
+    this.nodes.downloadLinkEl.click();
     this.api.toolbar.close();
 
-    return false
+    return false;
   }
 
   /**
@@ -257,12 +261,13 @@ export default class Ui {
    * @return {Element}
    */
   createFileButton() {
-    let button = make('div', [this.CSS.button]);
-    const selectText = this.i18n === 'en' ? 'Select an Image' : '选择图片'
+    let button = make("div", [this.CSS.button]);
+    const selectText = "选择图片";
 
-    button.innerHTML = this.config.buttonContent || `${ButtonIcon} ${selectText}`;
+    button.innerHTML =
+      this.config.buttonContent || `${ButtonIcon} ${selectText}`;
 
-    button.addEventListener('click', () => {
+    button.addEventListener("click", () => {
       this.onSelectFile();
     });
 
@@ -276,15 +281,15 @@ export default class Ui {
   showPreloader(src) {
     this.nodes.imagePreloader.style.backgroundImage = `url(${src})`;
 
-    this.toggleStatus(Ui.status.UPLOADING);
+    this.toggleStatus(UI.status.UPLOADING);
   }
 
   /**
    * Hide uploading preloader
    */
   hidePreloader() {
-    this.nodes.imagePreloader.style.backgroundImage = '';
-    this.toggleStatus(Ui.status.EMPTY);
+    this.nodes.imagePreloader.style.backgroundImage = "";
+    this.toggleStatus(UI.status.EMPTY);
   }
 
   /**
@@ -295,33 +300,49 @@ export default class Ui {
     /**
      * Check for a source extension to compose element correctly: video tag for mp4, img — for others
      */
-    const tag = 'IMG';
+    const tag = "IMG";
 
     let attributes = {
-      src: url
+      src: url,
     };
 
-    this.imageUrl = url
+    this.imageUrl = url;
     /**
      * Compose tag with defined attributes
      * @type {Element}
      */
-    this.nodes.imageWrapper = make('DIV', this.CSS.imageWrapper, {});
-    this.nodes.imageInfoLabel = make('DIV', this.CSS.imageInfoLabel, {});
-    this.nodes.imageTopLeftDragger = make('DIV', this.CSS.imageTopLeftDragger, {});
-    this.nodes.imageTopRightDragger = make('DIV', this.CSS.imageTopRightDragger, {});
-    this.nodes.imageBottomLeftDragger = make('DIV', this.CSS.imageBottomLeftDragger, {});
-    this.nodes.imageBottomRightDragger = make('DIV', this.CSS.imageBottomRightDragger, {});
+    this.nodes.imageWrapper = make("DIV", this.CSS.imageWrapper, {});
+    this.nodes.imageInfoLabel = make("DIV", this.CSS.imageInfoLabel, {});
+    this.nodes.imageTopLeftDragger = make(
+      "DIV",
+      this.CSS.imageTopLeftDragger,
+      {}
+    );
+    this.nodes.imageTopRightDragger = make(
+      "DIV",
+      this.CSS.imageTopRightDragger,
+      {}
+    );
+    this.nodes.imageBottomLeftDragger = make(
+      "DIV",
+      this.CSS.imageBottomLeftDragger,
+      {}
+    );
+    this.nodes.imageBottomRightDragger = make(
+      "DIV",
+      this.CSS.imageBottomRightDragger,
+      {}
+    );
     this.nodes.imageEl = make(tag, this.CSS.imageEl, attributes);
 
     /**
      * Add load event listener
      */
-    this.nodes.imageEl.addEventListener('load', this.imageOnLoad.bind(this));
+    this.nodes.imageEl.addEventListener("load", this.imageOnLoad.bind(this));
 
     /**
      * Add resize event listener
-    */
+     */
     this.nodes.imageWrapper.appendChild(this.nodes.imageTopLeftDragger);
     this.nodes.imageWrapper.appendChild(this.nodes.imageInfoLabel);
     this.nodes.imageWrapper.appendChild(this.nodes.imageTopRightDragger);
@@ -335,18 +356,18 @@ export default class Ui {
   /**
    * image on load handler
    * init resize handler inside
-  */
+   */
   imageOnLoad() {
     loadJS(resizeScript, this.initResizeHandler.bind(this), document.body);
 
-    this.toggleStatus(Ui.status.FILLED);
+    this.toggleStatus(UI.status.FILLED);
     // eslint-disable-next-line no-undef
 
     /**
      * Preloader does not exists on first rendering with presaved data
      */
     if (this.nodes.imagePreloader) {
-      this.nodes.imagePreloader.style.backgroundImage = '';
+      this.nodes.imagePreloader.style.backgroundImage = "";
     }
   }
 
@@ -365,22 +386,22 @@ export default class Ui {
           top: true, // Use pointer coords to check for resize.
           left: true, // Disable resizing from left edge.
           bottom: true, // Resize if pointer target matches selector
-          right: true
-        }
+          right: true,
+        },
       })
-      .on('resizestart', () => {
+      .on("resizestart", () => {
         this.nodes.imageEl.style.opacity = 0.9;
         if (labelInfoTimer) clearTimeout(labelInfoTimer);
         this.nodes.imageInfoLabel.style.opacity = 1;
       })
-      .on('resizeend', (event) => {
+      .on("resizeend", (event) => {
         this.nodes.imageEl.style.opacity = 1;
         labelInfoTimer = setTimeout(() => {
           this.nodes.imageInfoLabel.style.opacity = 0;
         }, 500);
         event.stopPropagation();
       })
-      .on('resizemove', event => {
+      .on("resizemove", (event) => {
         let { x, y } = event.target.dataset;
         const maxWidth = event.target.parentElement.parentElement.clientWidth;
 
@@ -390,16 +411,20 @@ export default class Ui {
         // TODO:  先要看是竖的还是横的
         // const radio = event.target.height / event.target.width
 
-        const dragWidth = event.rect.width <= maxWidth ? event.rect.width : maxWidth;
+        const dragWidth =
+          event.rect.width <= maxWidth ? event.rect.width : maxWidth;
         const dragHeight = dragWidth * this.imageRatio;
 
-        this.nodes.imageInfoLabel.innerHTML = this.labelInfoHTML(dragHeight, dragWidth);
+        this.nodes.imageInfoLabel.innerHTML = this.labelInfoHTML(
+          dragHeight,
+          dragWidth
+        );
 
         // `h: ${parseInt(dragHeight)} px / w: ${parseInt(dragWidth)} px`
         Object.assign(event.target.style, {
           width: `${dragWidth}px`,
           height: `${dragHeight}px`,
-          transform: `translate(${event.deltaRect.left}px, ${event.deltaRect.top}px)`
+          transform: `translate(${event.deltaRect.left}px, ${event.deltaRect.top}px)`,
         });
 
         this.onStyleChange({
@@ -417,8 +442,15 @@ export default class Ui {
    * @param {string} width - current drag width of the image
    */
   labelInfoHTML(height, width) {
-    return '<span class="opacity-08">h:&nbsp;</span>' + parseInt(height) + '<span class="opacity-08">&nbsp;px</span>' + '&nbsp;&nbsp;/&nbsp;&nbsp;' +
-      '<span class="opacity-08">w:&nbsp;</span>' + parseInt(width) + '<span class="opacity-08">&nbsp;px</span>';
+    return (
+      '<span class="opacity-08">h:&nbsp;</span>' +
+      parseInt(height) +
+      '<span class="opacity-08">&nbsp;px</span>' +
+      "&nbsp;&nbsp;/&nbsp;&nbsp;" +
+      '<span class="opacity-08">w:&nbsp;</span>' +
+      parseInt(width) +
+      '<span class="opacity-08">&nbsp;px</span>'
+    );
   }
 
   /**
@@ -433,12 +465,15 @@ export default class Ui {
 
   /**
    * Changes UI status
-   * @param {string} status - see {@link Ui.status} constants
+   * @param {string} status - see {@link UI.status} constants
    */
   toggleStatus(status) {
-    for (const statusType in Ui.status) {
-      if (Ui.status.hasOwnProperty(statusType)) {
-        this.nodes.wrapper.classList.toggle(`${this.CSS.wrapper}--${Ui.status[statusType]}`, status === Ui.status[statusType]);
+    for (const statusType in UI.status) {
+      if (UI.status.hasOwnProperty(statusType)) {
+        this.nodes.wrapper.classList.toggle(
+          `${this.CSS.wrapper}--${UI.status[statusType]}`,
+          status === UI.status[statusType]
+        );
       }
     }
   }
@@ -449,7 +484,10 @@ export default class Ui {
    * @param {boolean} status - true for enable, false for disable
    */
   applyTune(tuneName, status) {
-    this.nodes.wrapper.classList.toggle(`${this.CSS.wrapper}--${tuneName}`, status);
+    this.nodes.wrapper.classList.toggle(
+      `${this.CSS.wrapper}--${tuneName}`,
+      status
+    );
   }
 }
 
