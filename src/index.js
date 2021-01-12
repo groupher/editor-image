@@ -39,12 +39,15 @@
  * @property {string} file.url — image URL
  */
 
+import { debounce } from "@groupher/editor-utils";
+
 // eslint-disable-next-line
 import css from "./index.css";
 import UI from "./ui";
 import ToolboxIcon from "./icon/toolbox.svg";
 import Uploader from "./uploader";
-import { debounce } from "./utils";
+
+import { TMP_PIC } from "./constant";
 
 /**
  * @typedef {object} ImageConfig
@@ -62,9 +65,6 @@ import { debounce } from "./utils";
  * @property {function(File): Promise.<UploadResponseFormat>} [uploader.uploadByFile] - method that upload image by File
  * @property {function(string): Promise.<UploadResponseFormat>} [uploader.uploadByUrl] - method that upload image by URL
  */
-
-const TMP_PIC =
-  "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1556276808-32fa466c5df8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80";
 
 /**
  * @typedef {object} UploadResponseFormat
@@ -122,7 +122,6 @@ export default class ImageTool {
       onUpload: (response) => this.onUpload(response),
       onError: (error) => this.uploadingFailed(error),
     });
-    console.log("> 0");
 
     /**
      * Module for working with UI
@@ -142,7 +141,6 @@ export default class ImageTool {
         // console.log('this.data: ', this.data)
       }, 200),
     });
-    console.log("> 1: ", this.ui);
 
     /**
      * Set saved state
@@ -152,12 +150,6 @@ export default class ImageTool {
         url: TMP_PIC,
       },
     };
-    console.log("> 2");
-    // this.data = {
-    //   file: {
-    //     url: TMP_PIC,
-    //   },
-    // };
   }
 
   /**
@@ -167,7 +159,6 @@ export default class ImageTool {
    * @return {HTMLDivElement}
    */
   render() {
-    console.log("# hello? ");
     return this.ui.render(this._data);
   }
 
@@ -192,7 +183,6 @@ export default class ImageTool {
 
     this._data.caption = caption.innerHTML;
 
-    console.log("# saving: ", this._data);
     return this._data;
   }
 

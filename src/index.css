@@ -136,6 +136,7 @@
     border: none;
     text-align: center;
     color: grey;
+    box-shadow: none;
 
     &[contentEditable="true"][data-placeholder]::before {
       position: absolute;

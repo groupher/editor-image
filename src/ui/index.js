@@ -1,16 +1,16 @@
-import ButtonIcon from "./icon/button-icon.svg";
-import { loadJS } from "./utils";
+import { loadJS, make } from "@groupher/editor-utils";
 // import interact from 'interactjs';
 
-import ResetIcon from "./icon/reset.svg";
-import RotateIcon from "./icon/rotate.svg";
-import DownloadIcon from "./icon/download.svg";
+import ButtonIcon from "../icon/button-icon.svg";
+import ResetIcon from "../icon/reset.svg";
+import RotateIcon from "../icon/rotate.svg";
+import DownloadIcon from "../icon/download.svg";
+
+import { TMP_PIC } from "../constant";
 
 const resizeScript =
   "https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js";
 
-const TMP_PIC =
-  "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1556276808-32fa466c5df8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80";
 /**
  * Class for working with UI:
  *  - rendering base structure
@@ -56,7 +56,7 @@ export default class UI {
     this.nodes = {
       wrapper: make("div", [this.CSS.baseClass, this.CSS.wrapper]),
       imageContainer: make("div", [this.CSS.imageContainer]),
-      fileButton: this.createFileButton(),
+      fileButton: undefined, // this.createFileButton(),
       imageWrapper: undefined,
       imageTopLeftDragger: undefined,
       imageTopRightDragger: undefined,
@@ -95,7 +95,8 @@ export default class UI {
     this.nodes.imageContainer.appendChild(this.nodes.imagePreloader);
     this.nodes.wrapper.appendChild(this.nodes.imageContainer);
     this.nodes.wrapper.appendChild(this.nodes.caption);
-    this.nodes.wrapper.appendChild(this.nodes.fileButton);
+    //
+    // this.nodes.wrapper.appendChild(this.nodes.fileButton);
   }
 
   /**
@@ -149,13 +150,12 @@ export default class UI {
    * @return {HTMLDivElement}
    */
   render(toolData) {
-    console.log("ui render: ", toolData);
     if (!toolData.file || Object.keys(toolData.file).length === 0) {
       this.toggleStatus(UI.status.EMPTY);
     } else {
       // this.toggleStatus(UI.status.UPLOADING);
       this.toggleStatus(UI.status.FILLED);
-      this.fillImage(toolData.url);
+      this.fillImage(toolData.file.url);
     }
 
     return this.nodes.wrapper;
@@ -268,6 +268,7 @@ export default class UI {
       this.config.buttonContent || `${ButtonIcon} ${selectText}`;
 
     button.addEventListener("click", () => {
+      console.log("clicked fuck");
       this.onSelectFile();
     });
 
@@ -490,27 +491,3 @@ export default class UI {
     );
   }
 }
-
-/**
- * Helper for making Elements with attributes
- *
- * @param  {string} tagName           - new Element tag name
- * @param  {array|string} classNames  - list or name of CSS class
- * @param  {Object} attributes        - any attributes
- * @return {Element}
- */
-export const make = function make(tagName, classNames = null, attributes = {}) {
-  let el = document.createElement(tagName);
-
-  if (Array.isArray(classNames)) {
-    el.classList.add(...classNames);
-  } else if (classNames) {
-    el.classList.add(classNames);
-  }
-
-  for (let attrName in attributes) {
-    el[attrName] = attributes[attrName];
-  }
-
-  return el;
-};
