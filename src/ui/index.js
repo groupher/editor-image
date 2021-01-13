@@ -25,12 +25,13 @@ export default class UI {
    * @param {ImageConfig} config - user config
    * @param {function} onSelectFile - callback for clicks on Select file buttor
    */
-  constructor({ api, config, onSelectFile, onStyleChange }) {
+  constructor({ api, config, onSelectFile, onStyleChange, reRender }) {
     this.api = api;
     this.i18n = config.i18n || "en";
     this.config = config;
     this.onSelectFile = onSelectFile;
     this.onStyleChange = onStyleChange;
+    this.reRender = reRender;
 
     this.imageUrl = "";
 
@@ -103,6 +104,7 @@ export default class UI {
     //
     this.jiugonge = new Jiugongge({
       api,
+      reRender: reRender,
     });
   }
 
@@ -160,12 +162,12 @@ export default class UI {
     return this.jiugonge.render(toolData);
   }
 
-  /**
-   * @param {ImageToolData} toolData
-   */
-  reRender(toolData) {
-    return;
-  }
+  // /**
+  //  * @param {ImageToolData} toolData
+  //  */
+  // reRender(toolData) {
+  //   return;
+  // }
 
   /**
    * @param {ImageToolData} toolData

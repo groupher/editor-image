@@ -16,12 +16,15 @@ export default class Jiugongge {
   /**
    * @param {object} api - Editor.js API
    */
-  constructor({ api }) {
+  constructor({ api, reRender }) {
     this.api = api;
+    this.reRender = reRender;
 
     this.nodes = {
       wrapper: null,
     };
+
+    this._data = {};
   }
 
   /**
@@ -55,6 +58,7 @@ export default class Jiugongge {
    * @return {HTMLDivElement}
    */
   render(data) {
+    this._data = data;
     this.nodes.wrapper = make("div", this.CSS.wrapper);
 
     for (let i = 0; i < data.items.length; i++) {
@@ -75,6 +79,22 @@ export default class Jiugongge {
   }
 
   /**
+   * add picture
+   *
+   * @memberof Jiugongge
+   */
+  _addLocalPicture() {
+    const index = this._data.items.length;
+
+    this._data.items.push({
+      index: index,
+      src: TMP_PIC[index],
+    });
+
+    this.reRender(this._data);
+  }
+
+  /**
    * make adder block
    *
    * @memberof Jiugongge
@@ -83,6 +103,10 @@ export default class Jiugongge {
     const AdderEl = make("div", this.CSS.adderBlock);
     const PlusIconEl = make("div", this.CSS.plus, {
       innerHTML: PlusIcon,
+    });
+
+    PlusIconEl.addEventListener("click", () => {
+      this._addLocalPicture();
     });
 
     const HintEl = make("div", this.CSS.hint);
