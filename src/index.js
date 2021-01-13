@@ -42,7 +42,7 @@
 import { debounce } from "@groupher/editor-utils";
 
 // eslint-disable-next-line
-import css from "./index.css";
+import css from "./styles/index.css";
 import UI from "./ui";
 import ToolboxIcon from "./icon/toolbox.svg";
 import Uploader from "./uploader";
@@ -129,6 +129,7 @@ export default class ImageTool {
     this.ui = new UI({
       api,
       config: this.config,
+      reRender: this.reRender.bind(this),
       onSelectFile: () => {
         this.uploader.uploadSelectedFile({
           onPreview: (src) => {
@@ -145,11 +146,27 @@ export default class ImageTool {
     /**
      * Set saved state
      */
+    // this._data = {
+    //   file: {
+    //     url: TMP_PIC,
+    //   },
+    // };
+
     this._data = {
-      file: {
-        url: TMP_PIC,
-      },
+      style: "jiugongge", // gallery, phoneGallery,
+      items: [],
     };
+
+    for (let i = 0; i < 5; i++) {
+      this._data.items.push({
+        index: i,
+        src: TMP_PIC[i],
+        width: "",
+        height: "",
+      });
+    }
+
+    this.element = null;
   }
 
   /**
@@ -159,7 +176,28 @@ export default class ImageTool {
    * @return {HTMLDivElement}
    */
   render() {
-    return this.ui.render(this._data);
+    this.element = this.ui.render(this._data);
+    return this.element;
+  }
+
+  /**
+   * @param {ImageToolData} toolData
+   */
+  reRender(data) {
+    this._data = data;
+    this.replaceElement(this.ui.render(this._data));
+  }
+
+  /**
+   * replace element wrapper with new html element
+   * @param {HTMLElement} node
+   */
+  replaceElement(node) {
+    this.element.replaceWith(node);
+    this.element = node;
+
+    this.api.tooltip.hide();
+    this.api.toolbar.close();
   }
 
   /**

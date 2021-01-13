@@ -1,0 +1,102 @@
+.image-tool {
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  &__image_jiugongge {
+    display: flex;
+    flex-wrap: wrap;
+    width: 489px;
+    max-height: 489px;
+    margin: 0 auto;
+  }
+
+  &__jiugongge_block {
+    width: 160px;
+    height: 160px;
+    border-radius: 2px;
+    background: #efefef;
+    margin-right: 3px;
+    margin-bottom: 3px;
+
+    &_image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+
+      &:hover {
+        filter: brightness(0.8);
+      }
+      transition: all 0.25s;
+    }
+  }
+
+  &__jiugongge_adder_block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 160px;
+    height: 160px;
+    border-radius: 2px;
+    background: #f7f7f7;
+    margin-right: 3px;
+    margin-bottom: 3px;
+
+    &:hover &_hint {
+      opacity: 1;
+    }
+
+    &_plus {
+      svg {
+        fill: lightgrey;
+        width: 42px;
+        height: 42px;
+        display: block;
+      }
+
+      &:hover {
+        filter: brightness(0.8);
+        cursor: pointer;
+      }
+
+      transition: all 0.25s;
+    }
+
+    &_hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      position: absolute;
+      bottom: 0;
+      padding-bottom: 10px;
+
+      /* background: white; */
+
+      &__icon {
+        margin-left: -12px;
+        svg {
+          fill: lightgrey;
+          width: 13px;
+          height: 13px;
+          display: block;
+        }
+      }
+
+      &__text {
+        font-size: 14px;
+        color: lightgrey;
+        margin-left: 8px;
+      }
+
+      &:hover {
+        color: grey;
+        filter: brightness(0.8);
+        cursor: pointer;
+      }
+
+      transition: all 0.25s ease-out;
+    }
+  }
+}

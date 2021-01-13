@@ -3,6 +3,9 @@
   --front-color: #388ae5;
   --border-color: #e8e8eb;
 
+  margin-top: 20px;
+  margin-bottom: 20px;
+
   &__image {
     border-radius: 3px;
     overflow: hidden;

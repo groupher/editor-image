@@ -8,6 +8,8 @@ import DownloadIcon from "../icon/download.svg";
 
 import { TMP_PIC } from "../constant";
 
+import Jiugongge from "./jiugongge";
+
 const resizeScript =
   "https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js";
 
@@ -97,6 +99,11 @@ export default class UI {
     this.nodes.wrapper.appendChild(this.nodes.caption);
     //
     // this.nodes.wrapper.appendChild(this.nodes.fileButton);
+
+    //
+    this.jiugonge = new Jiugongge({
+      api,
+    });
   }
 
   /**
@@ -150,6 +157,21 @@ export default class UI {
    * @return {HTMLDivElement}
    */
   render(toolData) {
+    return this.jiugonge.render(toolData);
+  }
+
+  /**
+   * @param {ImageToolData} toolData
+   */
+  reRender(toolData) {
+    return;
+  }
+
+  /**
+   * @param {ImageToolData} toolData
+   * @return {HTMLDivElement}
+   */
+  renderBak(toolData) {
     if (!toolData.file || Object.keys(toolData.file).length === 0) {
       this.toggleStatus(UI.status.EMPTY);
     } else {
