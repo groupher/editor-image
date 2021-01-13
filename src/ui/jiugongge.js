@@ -2,8 +2,12 @@ import { make } from "@groupher/editor-utils";
 
 // eslint-disable-next-line
 import css from "../styles/jiugongge.css";
-import PlusIcon from "../icon/plus.svg";
+import UploadIcon from "../icon/upload.svg";
 import LinkAddIcon from "../icon/link-add.svg";
+
+import PenIcon from "../icon/pen.svg";
+import DeleteIcon from "../icon/delete.svg";
+import DownloadIcon from "../icon/download.svg";
 
 import { TMP_PIC } from "../constant";
 /**
@@ -44,9 +48,11 @@ export default class Jiugongge {
       wrapper: "image-tool__image_jiugongge",
       block: "image-tool__jiugongge_block",
       image: "image-tool__jiugongge_block_image",
+      toolbar: "image-tool__jiugongge_block_toolbar",
+      toolbarIcon: "image-tool__jiugongge_block_toolbar__icon",
 
       adderBlock: "image-tool__jiugongge_adder_block",
-      plus: "image-tool__jiugongge_adder_block_plus",
+      upload: "image-tool__jiugongge_adder_block_upload",
       hint: "image-tool__jiugongge_adder_block_hint",
       hintIcon: "image-tool__jiugongge_adder_block_hint__icon",
       hintText: "image-tool__jiugongge_adder_block_hint__text",
@@ -67,12 +73,13 @@ export default class Jiugongge {
       const ImageEl = make("img", this.CSS.image, { src: item.src });
 
       BlockEl.appendChild(ImageEl);
+      BlockEl.appendChild(this._drawInlineToolbar());
       this.nodes.wrapper.appendChild(BlockEl);
     }
 
     // add adder if needed
     if (data.items.length < 9) {
-      this.nodes.wrapper.appendChild(this._makeAdder());
+      this.nodes.wrapper.appendChild(this._drawAdder());
     }
 
     return this.nodes.wrapper;
@@ -95,17 +102,52 @@ export default class Jiugongge {
   }
 
   /**
-   * make adder block
+   * draw inline toolbar
    *
    * @memberof Jiugongge
    */
-  _makeAdder() {
-    const AdderEl = make("div", this.CSS.adderBlock);
-    const PlusIconEl = make("div", this.CSS.plus, {
-      innerHTML: PlusIcon,
+  _drawInlineToolbar() {
+    const WrapperEl = make("div", this.CSS.toolbar);
+
+    // 添加说明，更换图片，删除，下载
+    const DescIconEl = make("div", this.CSS.toolbarIcon, {
+      innerHTML: PenIcon,
+    });
+    const DownloadEl = make("div", this.CSS.toolbarIcon, {
+      innerHTML: DownloadIcon,
+    });
+    const UploadEl = make("div", this.CSS.toolbarIcon, {
+      innerHTML: UploadIcon,
+    });
+    const DeleteEl = make("div", this.CSS.toolbarIcon, {
+      innerHTML: DeleteIcon,
     });
 
-    PlusIconEl.addEventListener("click", () => {
+    this.api.tooltip.onHover(DescIconEl, "添加描述", { delay: 500 });
+    this.api.tooltip.onHover(DownloadEl, "下载", { delay: 500 });
+    this.api.tooltip.onHover(UploadEl, "重新上传", { delay: 500 });
+    this.api.tooltip.onHover(DeleteEl, "删除", { delay: 500 });
+
+    WrapperEl.appendChild(DescIconEl);
+    WrapperEl.appendChild(DownloadEl);
+    WrapperEl.appendChild(UploadEl);
+    WrapperEl.appendChild(DeleteEl);
+    //
+    return WrapperEl;
+  }
+
+  /**
+   * draw adder block
+   *
+   * @memberof Jiugongge
+   */
+  _drawAdder() {
+    const AdderEl = make("div", this.CSS.adderBlock);
+    const UploadIconEl = make("div", this.CSS.upload, {
+      innerHTML: UploadIcon,
+    });
+
+    UploadIconEl.addEventListener("click", () => {
       this._addLocalPicture();
     });
 
@@ -122,7 +164,7 @@ export default class Jiugongge {
     HintEl.appendChild(HintIconEl);
     HintEl.appendChild(HintTextEl);
 
-    AdderEl.appendChild(PlusIconEl);
+    AdderEl.appendChild(UploadIconEl);
     AdderEl.appendChild(HintEl);
 
     this.api.tooltip.onHover(HintEl, "通过连接添加图片", { delay: 1000 });
