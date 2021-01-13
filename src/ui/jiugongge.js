@@ -1,4 +1,7 @@
 import { make } from "@groupher/editor-utils";
+import GLightbox from "gLightbox";
+// eslint-disable-next-line
+import glightboxCss from "glightbox/dist/css/glightbox.min.css";
 
 // eslint-disable-next-line
 import css from "../styles/jiugongge.css";
@@ -10,6 +13,13 @@ import DeleteIcon from "../icon/delete.svg";
 import DownloadIcon from "../icon/download.svg";
 
 import { TMP_PIC } from "../constant";
+
+const lightBoxScript =
+  "https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js";
+
+const lightBoxCSS =
+  "https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css";
+
 /**
  * Class for working with Jiugongge UI:
  *  - rendering pictures with jiugongge style
@@ -29,6 +39,8 @@ export default class Jiugongge {
     };
 
     this._data = {};
+
+    this.lightbox = GLightbox({ loop: true });
   }
 
   /**
@@ -70,7 +82,28 @@ export default class Jiugongge {
     for (let i = 0; i < data.items.length; i++) {
       const item = data.items[i];
       const BlockEl = make("div", this.CSS.block);
-      const ImageEl = make("img", this.CSS.image, { src: item.src });
+
+      BlockEl.addEventListener("click", () => {
+        const s1 = this._data.items.slice(0, i);
+        const s2 = this._data.items.slice(i, data.items.length);
+        // 确保当前打开的在第一张显示
+        const sortedItems = [...s2, ...s1];
+        const imageElements = sortedItems.map((item) => ({
+          href: item.src,
+          type: "image",
+        }));
+
+        this.lightbox.setElements(imageElements);
+        this.lightbox.open();
+      });
+
+      const ImageEl = make("img", this.CSS.image, {
+        src: item.src,
+        alt: "image",
+      });
+
+      // ImageWrapperEl.appendChild(ImageEl);
+      // BlockEl.appendChild(ImageWrapperEl);
 
       BlockEl.appendChild(ImageEl);
       BlockEl.appendChild(this._drawInlineToolbar());

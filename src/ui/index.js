@@ -1,4 +1,4 @@
-import { loadJS, make } from "@groupher/editor-utils";
+import { loadJS, loadCSS, make } from "@groupher/editor-utils";
 // import interact from 'interactjs';
 
 import ButtonIcon from "../icon/button-icon.svg";
@@ -12,6 +12,12 @@ import Jiugongge from "./jiugongge";
 
 const resizeScript =
   "https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js";
+
+const lightBoxScript =
+  "https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js";
+
+const lightBoxCSS =
+  "https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css";
 
 /**
  * Class for working with UI:

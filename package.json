@@ -42,6 +42,7 @@
     "webpack-cli": "^3.2.3"
   },
   "dependencies": {
-    "@groupher/editor-utils": "^0.1.85"
+    "@groupher/editor-utils": "0.1.86",
+    "glightbox": "^3.0.7"
   }
 }
