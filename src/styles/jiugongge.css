@@ -7,7 +7,9 @@
     min-height: 100px;
 
     textarea {
+      font-size: 12px;
       padding: 8px;
+      margin: 5px 0;
       outline: none;
       height: 100px;
       min-height: 100px;
@@ -15,7 +17,9 @@
       width: 100%;
       max-width: 100%;
       min-width: 100%;
-      border: 0;
+      border: 1px solid;
+      border-color: #f3f3f3;
+      border-radius: 5px;
     }
   }
 
@@ -36,6 +40,24 @@
     margin-top: 8px;
     text-align: center;
     cursor: pointer;
+  }
+
+  &__upload_popover_textarea {
+    display: none;
+    margin-top: 6px;
+    width: 180px;
+    font-size: 12px;
+    padding: 8px;
+    outline: none;
+    height: 50px;
+    min-height: 50px;
+    max-height: 50px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    border: 1px solid;
+    border-color: #f3f3f3;
+    border-radius: 5px;
   }
 
   &__image_jiugongge {

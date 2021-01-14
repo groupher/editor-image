@@ -76,6 +76,7 @@ export default class Jiugongge {
       descPopover: "image-tool__desc_popover",
       uploadPopover: "image-tool__upload_popover",
       uploadPopoverBtn: "image-tool__upload_popover_btn",
+      uploadPopoverInput: "image-tool__upload_popover_textarea",
     };
   }
 
@@ -257,9 +258,18 @@ export default class Jiugongge {
       innerHTML: "图片链接",
     });
 
-    // TextareaEl.addEventListener("input", (e) => {
-    //   this._data.items[index].desc = e.target.value;
-    // });
+    const LinkUploadTextareaEl = make("textarea", this.CSS.uploadPopoverInput, {
+      placeholder: "链接地址",
+    });
+
+    LinkUploadEl.addEventListener("click", (e) => {
+      LinkUploadTextareaEl.style.display = "block";
+      LinkUploadTextareaEl.focus();
+    });
+
+    LinkUploadTextareaEl.addEventListener("blur", (e) => {
+      LinkUploadTextareaEl.style.display = "none";
+    });
 
     // TextareaEl.addEventListener("blur", (e) => {
     //   const toolbarEl = this.nodes.wrapper.querySelector(
@@ -270,6 +280,7 @@ export default class Jiugongge {
 
     WrapperEl.appendChild(LocalUploadEl);
     WrapperEl.appendChild(LinkUploadEl);
+    WrapperEl.appendChild(LinkUploadTextareaEl);
 
     return {
       content: WrapperEl,
