@@ -102,7 +102,7 @@
       padding-right: 4px;
       width: calc(100% - 12px);
       height: 40px;
-      opacity: 1;
+      opacity: 0;
 
       background-image: linear-gradient(transparent, #272727);
       transition: all 0.25s;

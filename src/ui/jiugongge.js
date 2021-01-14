@@ -1,7 +1,7 @@
 import { make } from "@groupher/editor-utils";
 import GLightbox from "gLightbox";
 
-import tippy from "tippy.js";
+import tippy, { hideAll } from "tippy.js";
 
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
@@ -116,6 +116,10 @@ export default class Jiugongge {
 
       BlockEl.appendChild(ImageEl);
       BlockEl.appendChild(this._drawInlineToolbar(i, item.desc));
+
+      // hide all popover when leave
+      BlockEl.addEventListener("mouseleave", () => hideAll());
+
       this.nodes.wrapper.appendChild(BlockEl);
     }
 
@@ -240,6 +244,9 @@ export default class Jiugongge {
       placement: "bottom",
       // allowing you to hover over and click inside them.
       interactive: true,
+      onShow() {
+        setTimeout(() => TextareaEl.focus());
+      },
     };
   }
 
@@ -270,13 +277,6 @@ export default class Jiugongge {
     LinkUploadTextareaEl.addEventListener("blur", (e) => {
       LinkUploadTextareaEl.style.display = "none";
     });
-
-    // TextareaEl.addEventListener("blur", (e) => {
-    //   const toolbarEl = this.nodes.wrapper.querySelector(
-    //     `[data-toolbar='${index}']`
-    //   );
-    //   toolbarEl.replaceWith(this._drawInlineToolbar(index, e.target.value));
-    // });
 
     WrapperEl.appendChild(LocalUploadEl);
     WrapperEl.appendChild(LinkUploadEl);
