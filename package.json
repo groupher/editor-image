@@ -44,6 +44,7 @@
   "dependencies": {
     "@groupher/editor-utils": "0.1.86",
     "glightbox": "^3.0.7",
-    "ramda": "^0.27.1"
+    "ramda": "^0.27.1",
+    "tippy.js": "^6.2.7"
   }
 }

@@ -2,6 +2,23 @@
   margin-top: 20px;
   margin-bottom: 20px;
 
+  &__desc_popover {
+    width: 240px;
+    min-height: 100px;
+
+    textarea {
+      padding: 8px;
+      outline: none;
+      height: 100px;
+      min-height: 100px;
+      max-height: 100px;
+      width: 100%;
+      max-width: 100%;
+      min-width: 100%;
+      border: 0;
+    }
+  }
+
   &__image_jiugongge {
     display: flex;
     flex-wrap: wrap;
@@ -40,12 +57,25 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 100%;
+      padding-left: 8px;
+      padding-right: 4px;
+      width: calc(100% - 12px);
       height: 40px;
-      opacity: 0;
+      opacity: 1;
 
       background-image: linear-gradient(transparent, #272727);
       transition: all 0.25s;
+
+      &__desc {
+        font-size: 12px;
+        opacity: 0.8;
+        color: white;
+        flex-grow: 1;
+        width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
       &__icon {
         svg {
@@ -53,9 +83,16 @@
           width: 13px;
           height: 13px;
           display: block;
-          margin-left: 5px;
-          margin-right: 5px;
+          margin-left: 4px;
+          margin-right: 4px;
           cursor: pointer;
+        }
+      }
+
+      &__icon_small {
+        svg {
+          width: 11px;
+          height: 11px;
         }
       }
     }

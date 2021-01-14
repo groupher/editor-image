@@ -1,5 +1,11 @@
 import { make } from "@groupher/editor-utils";
 import GLightbox from "gLightbox";
+
+import tippy from "tippy.js";
+
+import "tippy.js/dist/tippy.css";
+import "tippy.js/themes/light.css";
+
 // eslint-disable-next-line
 import glightboxCss from "glightbox/dist/css/glightbox.min.css";
 
@@ -12,7 +18,6 @@ import LinkAddIcon from "../icon/link-add.svg";
 
 import PenIcon from "../icon/pen.svg";
 import DeleteIcon from "../icon/delete.svg";
-import DownloadIcon from "../icon/download.svg";
 
 import { TMP_PIC } from "../constant";
 
@@ -57,13 +62,18 @@ export default class Jiugongge {
       block: "image-tool__jiugongge_block",
       image: "image-tool__jiugongge_block_image",
       toolbar: "image-tool__jiugongge_block_toolbar",
+      toolbarDesc: "image-tool__jiugongge_block_toolbar__desc",
       toolbarIcon: "image-tool__jiugongge_block_toolbar__icon",
+      toolbarSmallIcon: "image-tool__jiugongge_block_toolbar__icon_small",
 
       adderBlock: "image-tool__jiugongge_adder_block",
       upload: "image-tool__jiugongge_adder_block_upload",
       hint: "image-tool__jiugongge_adder_block_hint",
       hintIcon: "image-tool__jiugongge_adder_block_hint__icon",
       hintText: "image-tool__jiugongge_adder_block_hint__text",
+
+      //
+      descPopover: "image-tool__desc_popover",
     };
   }
 
@@ -102,7 +112,7 @@ export default class Jiugongge {
       // BlockEl.appendChild(ImageWrapperEl);
 
       BlockEl.appendChild(ImageEl);
-      BlockEl.appendChild(this._drawInlineToolbar(i));
+      BlockEl.appendChild(this._drawInlineToolbar(i, item.desc));
       this.nodes.wrapper.appendChild(BlockEl);
     }
 
@@ -147,32 +157,43 @@ export default class Jiugongge {
    *
    * @memberof Jiugongge
    */
-  _drawInlineToolbar(index) {
-    const WrapperEl = make("div", this.CSS.toolbar);
+  _drawInlineToolbar(index, desc) {
+    const WrapperEl = make("div", this.CSS.toolbar, {
+      "data-toolbar": index,
+    });
+
+    const DescEl = make("div", this.CSS.toolbarDesc, {
+      innerHTML: desc,
+    });
 
     // 添加说明，更换图片，删除，下载
     const DescIconEl = make("div", this.CSS.toolbarIcon, {
       innerHTML: PenIcon,
     });
-    const DownloadEl = make("div", this.CSS.toolbarIcon, {
-      innerHTML: DownloadIcon,
-    });
     const UploadEl = make("div", this.CSS.toolbarIcon, {
       innerHTML: UploadIcon,
     });
-    const DeleteEl = make("div", this.CSS.toolbarIcon, {
-      innerHTML: DeleteIcon,
-    });
+    const DeleteEl = make(
+      "div",
+      [this.CSS.toolbarIcon, this.CSS.toolbarSmallIcon],
+      {
+        innerHTML: DeleteIcon,
+      }
+    );
 
     DeleteEl.addEventListener("click", (e) => this._deletePicture(index));
 
-    this.api.tooltip.onHover(DescIconEl, "添加描述", { delay: 500 });
-    this.api.tooltip.onHover(DownloadEl, "下载", { delay: 500 });
+    tippy(DescIconEl, this._drawDescInputer(index));
+
+    this.api.tooltip.onHover(DescIconEl, "添加描述", { delay: 1500 });
     this.api.tooltip.onHover(UploadEl, "重新上传", { delay: 500 });
     this.api.tooltip.onHover(DeleteEl, "删除", { delay: 500 });
 
+    if (!!desc) {
+      WrapperEl.appendChild(DescEl);
+    }
+
     WrapperEl.appendChild(DescIconEl);
-    WrapperEl.appendChild(DownloadEl);
     WrapperEl.appendChild(UploadEl);
     WrapperEl.appendChild(DeleteEl);
 
@@ -180,6 +201,42 @@ export default class Jiugongge {
     WrapperEl.addEventListener("click", (e) => e.stopPropagation());
 
     return WrapperEl;
+  }
+
+  /**
+   * draw picture desc input
+   *
+   * @memberof Jiugongge
+   */
+  _drawDescInputer(index) {
+    const WrapperEl = make("div", this.CSS.descPopover);
+    const TextareaEl = make("textarea", "", {
+      placeholder: "添加描述..",
+      value: this._data.items[index].desc || "",
+    });
+
+    TextareaEl.addEventListener("input", (e) => {
+      this._data.items[index].desc = e.target.value;
+    });
+
+    TextareaEl.addEventListener("blur", (e) => {
+      const toolbarEl = this.nodes.wrapper.querySelector(
+        `[data-toolbar='${index}']`
+      );
+      toolbarEl.replaceWith(this._drawInlineToolbar(index, e.target.value));
+    });
+
+    WrapperEl.appendChild(TextareaEl);
+
+    return {
+      content: WrapperEl,
+      theme: "light",
+      // delay: 200,
+      trigger: "click",
+      placement: "bottom",
+      // allowing you to hover over and click inside them.
+      interactive: true,
+    };
   }
 
   /**

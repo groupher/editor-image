@@ -161,8 +161,9 @@ export default class ImageTool {
       this._data.items.push({
         index: i,
         src: TMP_PIC[i],
-        width: "",
-        height: "",
+        desc: i === 0 ? "我是一条描述信息，这是我的尾巴" : "",
+        // width: "",
+        // height: "",
       });
     }
 
