@@ -74,6 +74,8 @@ export default class Jiugongge {
 
       //
       descPopover: "image-tool__desc_popover",
+      uploadPopover: "image-tool__upload_popover",
+      uploadPopoverBtn: "image-tool__upload_popover_btn",
     };
   }
 
@@ -184,6 +186,7 @@ export default class Jiugongge {
     DeleteEl.addEventListener("click", (e) => this._deletePicture(index));
 
     tippy(DescIconEl, this._drawDescInputer(index));
+    tippy(UploadEl, this._drawUploadOptions(index));
 
     this.api.tooltip.onHover(DescIconEl, "添加描述", { delay: 1500 });
     this.api.tooltip.onHover(UploadEl, "重新上传", { delay: 500 });
@@ -227,6 +230,46 @@ export default class Jiugongge {
     });
 
     WrapperEl.appendChild(TextareaEl);
+
+    return {
+      content: WrapperEl,
+      theme: "light",
+      // delay: 200,
+      trigger: "click",
+      placement: "bottom",
+      // allowing you to hover over and click inside them.
+      interactive: true,
+    };
+  }
+
+  /**
+   * draw picture upload options input
+   *
+   * @memberof Jiugongge
+   */
+  _drawUploadOptions() {
+    const WrapperEl = make("div", this.CSS.uploadPopover);
+    const LocalUploadEl = make("div", this.CSS.uploadPopoverBtn, {
+      innerHTML: "本地上传",
+    });
+
+    const LinkUploadEl = make("div", this.CSS.uploadPopoverBtn, {
+      innerHTML: "图片链接",
+    });
+
+    // TextareaEl.addEventListener("input", (e) => {
+    //   this._data.items[index].desc = e.target.value;
+    // });
+
+    // TextareaEl.addEventListener("blur", (e) => {
+    //   const toolbarEl = this.nodes.wrapper.querySelector(
+    //     `[data-toolbar='${index}']`
+    //   );
+    //   toolbarEl.replaceWith(this._drawInlineToolbar(index, e.target.value));
+    // });
+
+    WrapperEl.appendChild(LocalUploadEl);
+    WrapperEl.appendChild(LinkUploadEl);
 
     return {
       content: WrapperEl,
