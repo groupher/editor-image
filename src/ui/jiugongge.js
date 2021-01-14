@@ -3,6 +3,8 @@ import GLightbox from "gLightbox";
 // eslint-disable-next-line
 import glightboxCss from "glightbox/dist/css/glightbox.min.css";
 
+import { remove } from "ramda";
+
 // eslint-disable-next-line
 import css from "../styles/jiugongge.css";
 import UploadIcon from "../icon/upload.svg";
@@ -13,12 +15,6 @@ import DeleteIcon from "../icon/delete.svg";
 import DownloadIcon from "../icon/download.svg";
 
 import { TMP_PIC } from "../constant";
-
-const lightBoxScript =
-  "https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js";
-
-const lightBoxCSS =
-  "https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css";
 
 /**
  * Class for working with Jiugongge UI:
@@ -40,7 +36,7 @@ export default class Jiugongge {
 
     this._data = {};
 
-    this.lightbox = GLightbox({ loop: true });
+    this.previewer = GLightbox({ loop: true });
   }
 
   /**
@@ -93,8 +89,8 @@ export default class Jiugongge {
           type: "image",
         }));
 
-        this.lightbox.setElements(imageElements);
-        this.lightbox.open();
+        this.previewer.setElements(imageElements);
+        this.previewer.open();
       });
 
       const ImageEl = make("img", this.CSS.image, {
@@ -106,7 +102,7 @@ export default class Jiugongge {
       // BlockEl.appendChild(ImageWrapperEl);
 
       BlockEl.appendChild(ImageEl);
-      BlockEl.appendChild(this._drawInlineToolbar());
+      BlockEl.appendChild(this._drawInlineToolbar(i));
       this.nodes.wrapper.appendChild(BlockEl);
     }
 
@@ -122,6 +118,7 @@ export default class Jiugongge {
    * add picture
    *
    * @memberof Jiugongge
+   * @private
    */
   _addLocalPicture() {
     const index = this._data.items.length;
@@ -135,11 +132,22 @@ export default class Jiugongge {
   }
 
   /**
-   * draw inline toolbar
+   * delete picture from current items
+   *
+   * @param {Number} index - index in _data.items
+   * @memberof Jiugongge
+   * @private
+   */
+  _deletePicture(index) {
+    this._data.items = remove(index, 1, this._data.items);
+    this.reRender(this._data);
+  }
+
+  /* draw inline toolbar
    *
    * @memberof Jiugongge
    */
-  _drawInlineToolbar() {
+  _drawInlineToolbar(index) {
     const WrapperEl = make("div", this.CSS.toolbar);
 
     // 添加说明，更换图片，删除，下载
@@ -156,6 +164,8 @@ export default class Jiugongge {
       innerHTML: DeleteIcon,
     });
 
+    DeleteEl.addEventListener("click", (e) => this._deletePicture(index));
+
     this.api.tooltip.onHover(DescIconEl, "添加描述", { delay: 500 });
     this.api.tooltip.onHover(DownloadEl, "下载", { delay: 500 });
     this.api.tooltip.onHover(UploadEl, "重新上传", { delay: 500 });
@@ -165,7 +175,10 @@ export default class Jiugongge {
     WrapperEl.appendChild(DownloadEl);
     WrapperEl.appendChild(UploadEl);
     WrapperEl.appendChild(DeleteEl);
-    //
+
+    // avoid trigger previewer the whole picture
+    WrapperEl.addEventListener("click", (e) => e.stopPropagation());
+
     return WrapperEl;
   }
 
