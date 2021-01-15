@@ -58,6 +58,7 @@ export default class Gallery {
       /**
        * gallery's classes
        */
+      baseClass: this.api.styles.block,
       wrapper: "image-tool__gallery_image_gallery",
       mainImagesContainer: "image-tool__gallery_main_images_container",
       mainImages: "image-tool__gallery_main_images",
@@ -88,7 +89,7 @@ export default class Gallery {
    */
   render(data) {
     this._data = data;
-    this.nodes.wrapper = make("div", this.CSS.wrapper);
+    this.nodes.wrapper = make("div", [this.CSS.baseClass, this.CSS.wrapper]);
 
     const MainImagesContainer = make("div", this.CSS.mainImagesContainer);
     const MainImagesEl = make("div", this.CSS.mainImages);

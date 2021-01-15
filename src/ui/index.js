@@ -2,9 +2,10 @@ import { loadJS, loadCSS, make } from "@groupher/editor-utils";
 // import interact from 'interactjs';
 
 import ButtonIcon from "../icon/button-icon.svg";
-import ResetIcon from "../icon/reset.svg";
-import RotateIcon from "../icon/rotate.svg";
-import DownloadIcon from "../icon/download.svg";
+
+import SingleIcon from "../icon/single.svg";
+import GalleryIcon from "../icon/gallery.svg";
+import JiugonggeIcon from "../icon/jiugongge.svg";
 
 import { TMP_PIC } from "../constant";
 
@@ -47,19 +48,19 @@ export default class UI {
 
     this.settings = [
       {
-        name: "reset",
-        title: "原始尺寸",
-        icon: ResetIcon,
+        name: "single",
+        title: "单张模式",
+        icon: SingleIcon,
       },
       {
-        name: "rotate",
-        title: "旋转图片",
-        icon: RotateIcon,
+        name: "jiugongge",
+        title: "九宫格模式",
+        icon: JiugonggeIcon,
       },
       {
-        name: "download",
-        title: "下载原图",
-        icon: DownloadIcon,
+        name: "gallery",
+        title: "画廊模式",
+        icon: GalleryIcon,
       },
     ];
 
@@ -213,6 +214,10 @@ export default class UI {
       });
 
       itemEl.addEventListener("click", () => this.handleSettingAction(item));
+      this.api.tooltip.onHover(itemEl, item.title, {
+        delay: 200,
+        placement: "top",
+      });
 
       wrapper.appendChild(itemEl);
     });
