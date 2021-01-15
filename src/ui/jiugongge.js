@@ -100,6 +100,7 @@ export default class Jiugongge {
         const imageElements = sortedItems.map((item) => ({
           href: item.src,
           type: "image",
+          description: item.desc,
         }));
 
         this.previewer.setElements(imageElements);
