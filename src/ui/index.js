@@ -9,6 +9,7 @@ import DownloadIcon from "../icon/download.svg";
 import { TMP_PIC } from "../constant";
 
 import Jiugongge from "./jiugongge";
+import Gallery from "./gallery";
 
 const resizeScript =
   "https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js";
@@ -112,6 +113,10 @@ export default class UI {
       api,
       reRender: reRender,
     });
+    this.gallery = new Gallery({
+      api,
+      reRender: reRender,
+    });
   }
 
   /**
@@ -165,7 +170,8 @@ export default class UI {
    * @return {HTMLDivElement}
    */
   render(toolData) {
-    return this.jiugonge.render(toolData);
+    // return this.jiugonge.render(toolData);
+    return this.gallery.render(toolData);
   }
 
   // /**
