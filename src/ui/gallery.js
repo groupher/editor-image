@@ -59,6 +59,7 @@ export default class Gallery {
        * gallery's classes
        */
       wrapper: "image-tool__gallery_image_gallery",
+      mainImagesContainer: "image-tool__gallery_main_images_container",
       mainImages: "image-tool__gallery_main_images",
       miniMap: "image-tool__gallery_minimap",
       miniMapBlock: "image-tool__gallery_minimap_block",
@@ -88,6 +89,8 @@ export default class Gallery {
   render(data) {
     this._data = data;
     this.nodes.wrapper = make("div", this.CSS.wrapper);
+
+    const MainImagesContainer = make("div", this.CSS.mainImagesContainer);
     const MainImagesEl = make("div", this.CSS.mainImages);
     const MiniMapEl = this._drawMiniMap();
 
@@ -127,7 +130,9 @@ export default class Gallery {
       MainImagesEl.appendChild(BlockEl);
     }
 
-    this.nodes.wrapper.appendChild(MainImagesEl);
+    MainImagesContainer.appendChild(MainImagesEl);
+
+    this.nodes.wrapper.appendChild(MainImagesContainer);
     this.nodes.wrapper.appendChild(MiniMapEl);
 
     return this.nodes.wrapper;

@@ -63,11 +63,16 @@
   &__gallery_image_gallery {
   }
 
-  &__gallery_main_images {
-    display: flex;
-    flex-wrap: nowrap;
+  &__gallery_main_images_container {
     width: 100%;
     max-height: 300px;
+    overflow: hidden;
+  }
+  &__gallery_main_images {
+    display: flex;
+    width: 100%;
+    max-height: 100%;
+    padding-bottom: 17px;
     overflow: scroll;
   }
 
