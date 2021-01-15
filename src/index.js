@@ -39,12 +39,15 @@
  * @property {string} file.url — image URL
  */
 
+import { debounce } from "@groupher/editor-utils";
+
 // eslint-disable-next-line
-import css from "./index.css";
+import css from "./styles/index.css";
 import UI from "./ui";
 import ToolboxIcon from "./icon/toolbox.svg";
 import Uploader from "./uploader";
-import { debounce } from "./utils";
+
+import { TMP_PIC } from "./constant";
 
 /**
  * @typedef {object} ImageConfig
@@ -62,9 +65,6 @@ import { debounce } from "./utils";
  * @property {function(File): Promise.<UploadResponseFormat>} [uploader.uploadByFile] - method that upload image by File
  * @property {function(string): Promise.<UploadResponseFormat>} [uploader.uploadByUrl] - method that upload image by URL
  */
-
-const TMP_PIC =
-  "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1556276808-32fa466c5df8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80";
 
 /**
  * @typedef {object} UploadResponseFormat
@@ -122,7 +122,6 @@ export default class ImageTool {
       onUpload: (response) => this.onUpload(response),
       onError: (error) => this.uploadingFailed(error),
     });
-    console.log("> 0");
 
     /**
      * Module for working with UI
@@ -130,6 +129,7 @@ export default class ImageTool {
     this.ui = new UI({
       api,
       config: this.config,
+      reRender: this.reRender.bind(this),
       onSelectFile: () => {
         this.uploader.uploadSelectedFile({
           onPreview: (src) => {
@@ -142,22 +142,32 @@ export default class ImageTool {
         // console.log('this.data: ', this.data)
       }, 200),
     });
-    console.log("> 1: ", this.ui);
 
     /**
      * Set saved state
      */
-    this._data = {
-      file: {
-        url: TMP_PIC,
-      },
-    };
-    console.log("> 2");
-    // this.data = {
+    // this._data = {
     //   file: {
     //     url: TMP_PIC,
     //   },
     // };
+
+    this._data = {
+      style: "jiugongge", // gallery, phoneGallery,
+      items: [],
+    };
+
+    for (let i = 0; i < 5; i++) {
+      this._data.items.push({
+        index: i,
+        src: TMP_PIC[i],
+        desc: i === 0 ? "我是一条描述信息，这是我的尾巴" : "",
+        // width: "",
+        // height: "",
+      });
+    }
+
+    this.element = null;
   }
 
   /**
@@ -167,8 +177,28 @@ export default class ImageTool {
    * @return {HTMLDivElement}
    */
   render() {
-    console.log("# hello? ");
-    return this.ui.render(this._data);
+    this.element = this.ui.render(this._data);
+    return this.element;
+  }
+
+  /**
+   * @param {ImageToolData} toolData
+   */
+  reRender(data) {
+    this._data = data;
+    this.replaceElement(this.ui.render(this._data));
+  }
+
+  /**
+   * replace element wrapper with new html element
+   * @param {HTMLElement} node
+   */
+  replaceElement(node) {
+    this.element.replaceWith(node);
+    this.element = node;
+
+    this.api.tooltip.hide();
+    this.api.toolbar.close();
   }
 
   /**
@@ -192,7 +222,6 @@ export default class ImageTool {
 
     this._data.caption = caption.innerHTML;
 
-    console.log("# saving: ", this._data);
     return this._data;
   }
 

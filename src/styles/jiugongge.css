@@ -1,0 +1,211 @@
+.image-tool {
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  &__desc_popover {
+    width: 240px;
+    min-height: 100px;
+
+    textarea {
+      font-size: 12px;
+      padding: 8px;
+      margin: 5px 0;
+      outline: none;
+      height: 100px;
+      min-height: 100px;
+      max-height: 100px;
+      width: 100%;
+      max-width: 100%;
+      min-width: 100%;
+      border: 1px solid;
+      border-color: #f3f3f3;
+      border-radius: 5px;
+    }
+  }
+
+  &__upload_popover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-bottom: 8px;
+  }
+
+  &__upload_popover_btn {
+    width: 80px;
+    background: #f3f3f3;
+    color: grey;
+    padding: 3px 5px;
+    font-size: 12px;
+    border-radius: 4px;
+    margin-top: 8px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  &__upload_popover_textarea {
+    display: none;
+    margin-top: 6px;
+    width: 180px;
+    font-size: 12px;
+    padding: 8px;
+    outline: none;
+    height: 50px;
+    min-height: 50px;
+    max-height: 50px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    border: 1px solid;
+    border-color: #f3f3f3;
+    border-radius: 5px;
+  }
+
+  &__image_jiugongge {
+    display: flex;
+    flex-wrap: wrap;
+    width: 489px;
+    max-height: 489px;
+    margin: 0 auto;
+  }
+
+  &__jiugongge_block {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    border-radius: 2px;
+    background: #efefef;
+    margin-right: 3px;
+    margin-bottom: 3px;
+
+    &_image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+
+      &:hover {
+        filter: brightness(0.95);
+      }
+      transition: all 0.25s;
+    }
+
+    &:hover &_toolbar {
+      opacity: 1;
+    }
+
+    &_toolbar {
+      position: absolute;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-left: 8px;
+      padding-right: 4px;
+      width: calc(100% - 12px);
+      height: 40px;
+      opacity: 0;
+
+      background-image: linear-gradient(transparent, #272727);
+      transition: all 0.25s;
+
+      &__desc {
+        font-size: 12px;
+        opacity: 0.8;
+        color: white;
+        flex-grow: 1;
+        width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      &__icon {
+        svg {
+          fill: white;
+          width: 13px;
+          height: 13px;
+          display: block;
+          margin-left: 4px;
+          margin-right: 4px;
+          cursor: pointer;
+        }
+      }
+
+      &__icon_small {
+        svg {
+          width: 11px;
+          height: 11px;
+        }
+      }
+    }
+  }
+
+  &__jiugongge_adder_block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 160px;
+    height: 160px;
+    border-radius: 2px;
+    background: #f7f7f7;
+    margin-right: 3px;
+    margin-bottom: 3px;
+
+    &:hover &_hint {
+      opacity: 1;
+    }
+
+    &_upload {
+      svg {
+        fill: lightgrey;
+        width: 42px;
+        height: 42px;
+        display: block;
+      }
+
+      &:hover {
+        filter: brightness(0.8);
+        cursor: pointer;
+      }
+
+      transition: all 0.25s;
+    }
+
+    &_hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      position: absolute;
+      bottom: 0;
+      padding-bottom: 10px;
+
+      /* background: white; */
+
+      &__icon {
+        margin-left: -12px;
+        svg {
+          fill: lightgrey;
+          width: 13px;
+          height: 13px;
+          display: block;
+        }
+      }
+
+      &__text {
+        font-size: 13px;
+        color: lightgrey;
+        margin-left: 8px;
+      }
+
+      &:hover {
+        color: grey;
+        filter: brightness(0.8);
+        cursor: pointer;
+      }
+
+      transition: all 0.25s ease-out;
+    }
+  }
+}

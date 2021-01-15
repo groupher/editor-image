@@ -1,7 +1,24 @@
+.glightbox-clean .gslide-description {
+  background: transparent !important;
+}
+.gdesc-inner {
+  background-image: linear-gradient(transparent, #272727) !important;
+  color: lightgrey;
+  font-size: 15px;
+  position: absolute;
+  width: calc(100% - 39px);
+  bottom: 0;
+  left: -1px;
+  word-break: break-all;
+}
+
 .image-tool {
   --bg-color: #cdd1e0;
   --front-color: #388ae5;
   --border-color: #e8e8eb;
+
+  margin-top: 20px;
+  margin-bottom: 20px;
 
   &__image {
     border-radius: 3px;
@@ -136,6 +153,7 @@
     border: none;
     text-align: center;
     color: grey;
+    box-shadow: none;
 
     &[contentEditable="true"][data-placeholder]::before {
       position: absolute;

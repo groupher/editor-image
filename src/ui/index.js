@@ -1,16 +1,25 @@
-import ButtonIcon from "./icon/button-icon.svg";
-import { loadJS } from "./utils";
+import { loadJS, loadCSS, make } from "@groupher/editor-utils";
 // import interact from 'interactjs';
 
-import ResetIcon from "./icon/reset.svg";
-import RotateIcon from "./icon/rotate.svg";
-import DownloadIcon from "./icon/download.svg";
+import ButtonIcon from "../icon/button-icon.svg";
+import ResetIcon from "../icon/reset.svg";
+import RotateIcon from "../icon/rotate.svg";
+import DownloadIcon from "../icon/download.svg";
+
+import { TMP_PIC } from "../constant";
+
+import Jiugongge from "./jiugongge";
+import Gallery from "./gallery";
 
 const resizeScript =
   "https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js";
 
-const TMP_PIC =
-  "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1556276808-32fa466c5df8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80";
+const lightBoxScript =
+  "https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js";
+
+const lightBoxCSS =
+  "https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css";
+
 /**
  * Class for working with UI:
  *  - rendering base structure
@@ -23,12 +32,13 @@ export default class UI {
    * @param {ImageConfig} config - user config
    * @param {function} onSelectFile - callback for clicks on Select file buttor
    */
-  constructor({ api, config, onSelectFile, onStyleChange }) {
+  constructor({ api, config, onSelectFile, onStyleChange, reRender }) {
     this.api = api;
     this.i18n = config.i18n || "en";
     this.config = config;
     this.onSelectFile = onSelectFile;
     this.onStyleChange = onStyleChange;
+    this.reRender = reRender;
 
     this.imageUrl = "";
 
@@ -56,7 +66,7 @@ export default class UI {
     this.nodes = {
       wrapper: make("div", [this.CSS.baseClass, this.CSS.wrapper]),
       imageContainer: make("div", [this.CSS.imageContainer]),
-      fileButton: this.createFileButton(),
+      fileButton: undefined, // this.createFileButton(),
       imageWrapper: undefined,
       imageTopLeftDragger: undefined,
       imageTopRightDragger: undefined,
@@ -95,7 +105,18 @@ export default class UI {
     this.nodes.imageContainer.appendChild(this.nodes.imagePreloader);
     this.nodes.wrapper.appendChild(this.nodes.imageContainer);
     this.nodes.wrapper.appendChild(this.nodes.caption);
-    this.nodes.wrapper.appendChild(this.nodes.fileButton);
+    //
+    // this.nodes.wrapper.appendChild(this.nodes.fileButton);
+
+    //
+    this.jiugonge = new Jiugongge({
+      api,
+      reRender: reRender,
+    });
+    this.gallery = new Gallery({
+      api,
+      reRender: reRender,
+    });
   }
 
   /**
@@ -149,13 +170,28 @@ export default class UI {
    * @return {HTMLDivElement}
    */
   render(toolData) {
-    console.log("ui render: ", toolData);
+    // return this.jiugonge.render(toolData);
+    return this.gallery.render(toolData);
+  }
+
+  // /**
+  //  * @param {ImageToolData} toolData
+  //  */
+  // reRender(toolData) {
+  //   return;
+  // }
+
+  /**
+   * @param {ImageToolData} toolData
+   * @return {HTMLDivElement}
+   */
+  renderBak(toolData) {
     if (!toolData.file || Object.keys(toolData.file).length === 0) {
       this.toggleStatus(UI.status.EMPTY);
     } else {
       // this.toggleStatus(UI.status.UPLOADING);
       this.toggleStatus(UI.status.FILLED);
-      this.fillImage(toolData.url);
+      this.fillImage(toolData.file.url);
     }
 
     return this.nodes.wrapper;
@@ -268,6 +304,7 @@ export default class UI {
       this.config.buttonContent || `${ButtonIcon} ${selectText}`;
 
     button.addEventListener("click", () => {
+      console.log("clicked fuck");
       this.onSelectFile();
     });
 
@@ -490,27 +527,3 @@ export default class UI {
     );
   }
 }
-
-/**
- * Helper for making Elements with attributes
- *
- * @param  {string} tagName           - new Element tag name
- * @param  {array|string} classNames  - list or name of CSS class
- * @param  {Object} attributes        - any attributes
- * @return {Element}
- */
-export const make = function make(tagName, classNames = null, attributes = {}) {
-  let el = document.createElement(tagName);
-
-  if (Array.isArray(classNames)) {
-    el.classList.add(...classNames);
-  } else if (classNames) {
-    el.classList.add(classNames);
-  }
-
-  for (let attrName in attributes) {
-    el[attrName] = attributes[attrName];
-  }
-
-  return el;
-};
