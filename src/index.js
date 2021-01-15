@@ -154,6 +154,7 @@ export default class ImageTool {
 
     this._data = {
       style: "jiugongge", // gallery, phoneGallery,
+      mode: "jiugongge",
       items: [],
     };
 
@@ -186,6 +187,7 @@ export default class ImageTool {
    */
   reRender(data) {
     this._data = data;
+    console.log("rerender: ", this._data);
     this.replaceElement(this.ui.render(this._data));
   }
 
@@ -208,7 +210,7 @@ export default class ImageTool {
    * @return {HTMLDivElement}
    */
   renderSettings() {
-    return this.ui.renderSettings();
+    return this.ui.renderSettings(this._data);
   }
 
   /**

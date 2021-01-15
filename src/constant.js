@@ -11,4 +11,8 @@ export const TMP_PIC = [
   "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1610447507579-dffd4d114ea5?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
 ];
 
-export const holder = 1;
+export const MODE = {
+  SINGLE: "single",
+  JIUGONGGE: "jiugongge",
+  GALLERY: "gallery",
+};

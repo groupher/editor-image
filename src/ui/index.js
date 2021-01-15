@@ -1,25 +1,18 @@
 import { loadJS, loadCSS, make } from "@groupher/editor-utils";
 // import interact from 'interactjs';
-
 import ButtonIcon from "../icon/button-icon.svg";
 
 import SingleIcon from "../icon/single.svg";
 import GalleryIcon from "../icon/gallery.svg";
 import JiugonggeIcon from "../icon/jiugongge.svg";
 
-import { TMP_PIC } from "../constant";
+import { TMP_PIC, MODE } from "../constant";
 
 import Jiugongge from "./jiugongge";
 import Gallery from "./gallery";
 
 const resizeScript =
   "https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js";
-
-const lightBoxScript =
-  "https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js";
-
-const lightBoxCSS =
-  "https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css";
 
 /**
  * Class for working with UI:
@@ -48,17 +41,17 @@ export default class UI {
 
     this.settings = [
       {
-        name: "single",
+        raw: MODE.SINGLE,
         title: "单张模式",
         icon: SingleIcon,
       },
       {
-        name: "jiugongge",
+        raw: MODE.JIUGONGGE,
         title: "九宫格模式",
         icon: JiugonggeIcon,
       },
       {
-        name: "gallery",
+        raw: MODE.GALLERY,
         title: "画廊模式",
         icon: GalleryIcon,
       },
@@ -148,6 +141,7 @@ export default class UI {
 
       settingsWrapper: "cdx-settings-panel",
       settingsButton: this.api.styles.settingsButton,
+      settingsButtonActive: this.api.styles.settingsButtonActive,
     };
   }
 
@@ -171,8 +165,19 @@ export default class UI {
    * @return {HTMLDivElement}
    */
   render(toolData) {
-    // return this.jiugonge.render(toolData);
-    return this.gallery.render(toolData);
+    this._data = toolData;
+
+    switch (toolData.mode) {
+      case MODE.JIUGONGGE: {
+        return this.jiugonge.render(toolData);
+      }
+      case MODE.GALLERY: {
+        return this.gallery.render(toolData);
+      }
+      default: {
+        return this.jiugonge.render(toolData);
+      }
+    }
   }
 
   // /**
@@ -204,7 +209,7 @@ export default class UI {
    *
    * @return {HTMLDivElement}
    */
-  renderSettings() {
+  renderSettings(data) {
     const wrapper = make("div", [this.CSS.settingsWrapper], {});
 
     this.settings.forEach((item) => {
@@ -219,6 +224,10 @@ export default class UI {
         placement: "top",
       });
 
+      if (data.mode === item.raw) {
+        itemEl.classList.add(this.CSS.settingsButtonActive);
+      }
+
       wrapper.appendChild(itemEl);
     });
 
@@ -231,14 +240,22 @@ export default class UI {
    * @return {Boolean}
    */
   handleSettingAction(setting) {
-    if (setting.name === "reset") {
-      return this.handleSettingActionReset();
+    this.api.toolbar.close();
+
+    if (setting.raw === MODE.SINGLE) {
+      console.log("TODO");
+      return false;
     }
-    if (setting.name === "rotate") {
-      return this.handleSettingActionRotate();
+
+    this._data.mode = setting.raw;
+
+    if (setting.raw === MODE.JIUGONGGE) {
+      console.log("MODE.JIUGONGGE");
+      this.reRender(this._data);
     }
-    if (setting.name === "download") {
-      return this.handleSettingActionDownload();
+    if (setting.raw === MODE.GALLERY) {
+      console.log("MODE.GALLERY");
+      this.reRender(this._data);
     }
 
     return false;
@@ -258,42 +275,6 @@ export default class UI {
     });
 
     this.api.toolbar.close();
-    return false;
-  }
-
-  /**
-   * handle image rotate
-   * @return {Boolean}
-   */
-  handleSettingActionRotate() {
-    let transform = "";
-
-    const currentTransForm = this.nodes.imageEl.style.transform;
-    if (!currentTransForm || currentTransForm === "") {
-      transform = "rotate(90deg)";
-    } else if (currentTransForm === "rotate(90deg)") {
-      transform = "rotate(180deg)";
-    } else if (currentTransForm === "rotate(180deg)") {
-      transform = "rotate(270deg)";
-    } else {
-      transform = "";
-    }
-
-    this.onStyleChange({ transform });
-
-    this.nodes.imageEl.style.transform = transform;
-    return false;
-  }
-
-  /**
-   * handle image download
-   * @return {Boolean}
-   */
-  handleSettingActionDownload() {
-    this.nodes.downloadLinkEl.href = this.imageUrl;
-    this.nodes.downloadLinkEl.click();
-    this.api.toolbar.close();
-
     return false;
   }
 
