@@ -1,4 +1,4 @@
-import { make } from "@groupher/editor-utils";
+import { make, swapArrayItems, clazz } from "@groupher/editor-utils";
 import GLightbox from "gLightbox";
 
 import tippy, { hideAll } from "tippy.js";
@@ -42,6 +42,7 @@ export default class Gallery {
     this._data = {};
 
     this.previewer = GLightbox({ loop: true });
+    this.draggingImage = null;
   }
 
   /**
@@ -80,6 +81,10 @@ export default class Gallery {
       uploadPopover: "image-tool__upload_popover",
       uploadPopoverBtn: "image-tool__upload_popover_btn",
       uploadPopoverInput: "image-tool__upload_popover_textarea",
+
+      //
+      imageDragging: "image-dragging",
+      imageDrop: "image-drop",
     };
   }
 
@@ -120,9 +125,6 @@ export default class Gallery {
         alt: "image",
       });
 
-      // ImageWrapperEl.appendChild(ImageEl);
-      // BlockEl.appendChild(ImageWrapperEl);
-
       BlockEl.appendChild(ImageEl);
       BlockEl.appendChild(this._drawInlineToolbar(i, item.desc));
 
@@ -153,6 +155,8 @@ export default class Gallery {
       const imageItem = this._data.items[i];
       const ImageEl = make("img", this.CSS.miniMapBlock, {
         src: imageItem.src,
+        "data-miniimage-index": i,
+        draggable: "true",
       });
 
       ImageEl.addEventListener("click", () => {
@@ -166,10 +170,48 @@ export default class Gallery {
         });
       });
 
+      ImageEl.addEventListener("dragstart", (e) => {
+        clazz.add(e.target, this.CSS.imageDragging);
+        this.draggingImage = ImageEl;
+      });
+
+      ImageEl.addEventListener("dragenter", (e) => {
+        if (this.draggingImage !== ImageEl) {
+          clazz.add(e.target, this.CSS.imageDrop);
+        }
+      });
+
+      // if the image is dragging to non-draggable area
+      ImageEl.addEventListener("dragend", (e) => {
+        clazz.remove(e.target, this.CSS.imageDragging);
+      });
+
+      ImageEl.addEventListener("dragover", (e) => {
+        if (this.draggingImage !== ImageEl) {
+          clazz.add(e.target, this.CSS.imageDrop);
+        }
+      });
+
+      ImageEl.addEventListener("dragleave", (e) => {
+        if (this.draggingImage !== ImageEl) {
+          clazz.remove(e.target, this.CSS.imageDrop);
+        }
+      });
+
+      ImageEl.addEventListener("drop", (e) => {
+        clazz.remove(this.draggingImage, this.CSS.imageDragging);
+        clazz.remove(e.target, this.CSS.imageDrop);
+        const fromIndex = parseInt(this.draggingImage.dataset.miniimageIndex);
+        const toIndex = parseInt(e.target.dataset.miniimageIndex);
+
+        swapArrayItems(this._data.items, fromIndex, toIndex);
+        this.draggingImage = null;
+
+        this.reRender(this._data);
+      });
+
       MiniMapEl.appendChild(ImageEl);
     }
-
-    // a.scrollIntoView({behavior: 'smooth', block: 'nearest'})
 
     MiniMapEl.appendChild(this._drawAdder());
 

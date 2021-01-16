@@ -179,6 +179,7 @@ export default class ImageTool {
    */
   render() {
     this.element = this.ui.render(this._data);
+
     return this.element;
   }
 
@@ -187,7 +188,6 @@ export default class ImageTool {
    */
   reRender(data) {
     this._data = data;
-    console.log("rerender: ", this._data);
     this.replaceElement(this.ui.render(this._data));
   }
 

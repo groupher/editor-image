@@ -1,3 +1,16 @@
+.image-dragging {
+  /* transform: scale(0.95); */
+  border-radius: 4px;
+  box-shadow: 10px 10px 50px -14px rgba(0, 0, 0, 0.5);
+  transform: rotate3d(0, 0, 1, 3deg);
+}
+
+.image-drop {
+  transform: scale(0.95);
+  border-radius: 4px;
+  box-shadow: 10px 10px 50px -14px rgba(0, 0, 0, 0.5);
+}
+
 .glightbox-clean .gslide-description {
   background: transparent !important;
 }

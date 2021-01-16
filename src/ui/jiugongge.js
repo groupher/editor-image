@@ -1,4 +1,4 @@
-import { make } from "@groupher/editor-utils";
+import { make, clazz, swapArrayItems } from "@groupher/editor-utils";
 import GLightbox from "gLightbox";
 
 import tippy, { hideAll } from "tippy.js";
@@ -41,6 +41,7 @@ export default class Jiugongge {
 
     this._data = {};
 
+    this.draggingImage = null;
     this.previewer = GLightbox({ loop: true });
   }
 
@@ -77,6 +78,10 @@ export default class Jiugongge {
       uploadPopover: "image-tool__upload_popover",
       uploadPopoverBtn: "image-tool__upload_popover_btn",
       uploadPopoverInput: "image-tool__upload_popover_textarea",
+
+      //
+      imageDragging: "image-dragging",
+      imageDrop: "image-drop",
     };
   }
 
@@ -110,10 +115,49 @@ export default class Jiugongge {
       const ImageEl = make("img", this.CSS.image, {
         src: item.src,
         alt: "image",
+        "data-image-index": i,
+        draggable: "true",
       });
 
-      // ImageWrapperEl.appendChild(ImageEl);
-      // BlockEl.appendChild(ImageWrapperEl);
+      ImageEl.addEventListener("dragstart", (e) => {
+        clazz.add(e.target, this.CSS.imageDragging);
+        this.draggingImage = ImageEl;
+      });
+
+      ImageEl.addEventListener("dragenter", (e) => {
+        if (this.draggingImage !== ImageEl) {
+          clazz.add(e.target, this.CSS.imageDrop);
+        }
+      });
+
+      // if the image is dragging to non-draggable area
+      ImageEl.addEventListener("dragend", (e) => {
+        clazz.remove(e.target, this.CSS.imageDragging);
+      });
+
+      ImageEl.addEventListener("dragover", (e) => {
+        if (this.draggingImage !== ImageEl) {
+          clazz.add(e.target, this.CSS.imageDrop);
+        }
+      });
+
+      ImageEl.addEventListener("dragleave", (e) => {
+        if (this.draggingImage !== ImageEl) {
+          clazz.remove(e.target, this.CSS.imageDrop);
+        }
+      });
+
+      ImageEl.addEventListener("drop", (e) => {
+        clazz.remove(this.draggingImage, this.CSS.imageDragging);
+        clazz.remove(e.target, this.CSS.imageDrop);
+        const fromIndex = parseInt(this.draggingImage.dataset.imageIndex);
+        const toIndex = parseInt(e.target.dataset.imageIndex);
+
+        swapArrayItems(this._data.items, fromIndex, toIndex);
+        this.draggingImage = null;
+
+        this.reRender(this._data);
+      });
 
       BlockEl.appendChild(ImageEl);
       BlockEl.appendChild(this._drawInlineToolbar(i, item.desc));
