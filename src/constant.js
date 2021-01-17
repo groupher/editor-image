@@ -16,3 +16,9 @@ export const MODE = {
   JIUGONGGE: "jiugongge",
   GALLERY: "gallery",
 };
+
+export const STATUS = {
+  EMPTY: "empty",
+  UPLOADING: "loading",
+  FILLED: "filled",
+};

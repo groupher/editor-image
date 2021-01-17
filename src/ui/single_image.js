@@ -1,16 +1,8 @@
 import { loadJS, loadCSS, make } from "@groupher/editor-utils";
+import { STATUS } from "../constant";
+
 // import interact from 'interactjs';
 import ButtonIcon from "../icon/button-icon.svg";
-
-import SingleIcon from "../icon/single.svg";
-import GalleryIcon from "../icon/gallery.svg";
-import JiugonggeIcon from "../icon/jiugongge.svg";
-
-import { TMP_PIC, MODE } from "../constant";
-
-import SingleImage from "./single_image";
-import JiugonggeImages from "./jiugongge_images";
-import GalleryImages from "./gallery_images";
 
 const resizeScript =
   "https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js";
@@ -21,42 +13,23 @@ const resizeScript =
  *  - show/hide preview
  *  - apply tune view
  */
-export default class UI {
+export default class Single {
   /**
    * @param {object} api - Editor.js API
    * @param {ImageConfig} config - user config
    * @param {function} onSelectFile - callback for clicks on Select file buttor
    */
-  constructor({ api, config, onSelectFile, onStyleChange, reRender }) {
+  constructor({ api, config, onSelectFile, onStyleChange }) {
     this.api = api;
     this.i18n = config.i18n || "en";
     this.config = config;
     this.onSelectFile = onSelectFile;
     this.onStyleChange = onStyleChange;
-    this.reRender = reRender;
 
     this.imageUrl = "";
 
     this.initWidth = "100%";
     this.initHeight = "auto";
-
-    this.settings = [
-      {
-        raw: MODE.SINGLE,
-        title: "单张模式",
-        icon: SingleIcon,
-      },
-      {
-        raw: MODE.JIUGONGGE,
-        title: "九宫格模式",
-        icon: JiugonggeIcon,
-      },
-      {
-        raw: MODE.GALLERY,
-        title: "画廊模式",
-        icon: GalleryIcon,
-      },
-    ];
 
     this.nodes = {
       wrapper: make("div", [this.CSS.baseClass, this.CSS.wrapper]),
@@ -100,24 +73,6 @@ export default class UI {
     this.nodes.imageContainer.appendChild(this.nodes.imagePreloader);
     this.nodes.wrapper.appendChild(this.nodes.imageContainer);
     this.nodes.wrapper.appendChild(this.nodes.caption);
-    //
-    // this.nodes.wrapper.appendChild(this.nodes.fileButton);
-
-    //
-    this.singleImage = new SingleImage({
-      api,
-      config,
-      onSelectFile,
-      onStyleChange,
-    });
-    this.jiugongeImages = new JiugonggeImages({
-      api,
-      reRender: reRender,
-    });
-    this.galleryImages = new GalleryImages({
-      api,
-      reRender: reRender,
-    });
   }
 
   /**
@@ -145,10 +100,6 @@ export default class UI {
       imageBottomRightDragger: "image-tool__image-wrapper-bottomright-dragger",
       imageEl: "image-tool__image-picture",
       caption: "image-tool__caption",
-
-      settingsWrapper: "cdx-settings-panel",
-      settingsButton: this.api.styles.settingsButton,
-      settingsButtonActive: this.api.styles.settingsButtonActive,
     };
   }
 
@@ -172,86 +123,11 @@ export default class UI {
    * @return {HTMLDivElement}
    */
   render(toolData) {
-    this._data = toolData;
+    const url = toolData.items[0].src;
 
-    switch (toolData.mode) {
-      case MODE.JIUGONGGE: {
-        return this.jiugongeImages.render(toolData);
-      }
-      case MODE.GALLERY: {
-        return this.galleryImages.render(toolData);
-      }
-      default: {
-        return this.singleImage.render(toolData);
-      }
-    }
-  }
-
-  // /**
-  //  * @param {ImageToolData} toolData
-  //  */
-  // reRender(toolData) {
-  //   return;
-  // }
-
-  /**
-   * @param {ImageToolData} toolData
-   * @return {HTMLDivElement}
-   */
-  renderBak(toolData) {
-    if (!toolData.file || Object.keys(toolData.file).length === 0) {
-      this.toggleStatus(UI.status.EMPTY);
-    } else {
-      // this.toggleStatus(UI.status.UPLOADING);
-      this.toggleStatus(UI.status.FILLED);
-      this.fillImage(toolData.file.url);
-    }
+    this.fillImage(url);
 
     return this.nodes.wrapper;
-  }
-
-  /**
-   * Renders Settings panel
-   * @public
-   *
-   * @return {HTMLDivElement}
-   */
-  renderSettings(data) {
-    const wrapper = make("div", [this.CSS.settingsWrapper], {});
-
-    this.settings.forEach((item) => {
-      const itemEl = make("div", [this.CSS.settingsButton], {
-        title: item.title,
-        innerHTML: item.icon,
-      });
-
-      itemEl.addEventListener("click", () => this.handleSettingAction(item));
-      this.api.tooltip.onHover(itemEl, item.title, {
-        delay: 200,
-        placement: "top",
-      });
-
-      if (data.mode === item.raw) {
-        itemEl.classList.add(this.CSS.settingsButtonActive);
-      }
-
-      wrapper.appendChild(itemEl);
-    });
-
-    wrapper.appendChild(this.nodes.downloadLinkEl);
-    return wrapper;
-  }
-
-  /**
-   * handle image settings
-   * @return {Boolean}
-   */
-  handleSettingAction(setting) {
-    this.api.toolbar.close();
-    this._data.mode = setting.raw;
-    this.reRender(this._data);
-
-    return false;
   }
 
   /**
@@ -280,7 +156,7 @@ export default class UI {
   showPreloader(src) {
     this.nodes.imagePreloader.style.backgroundImage = `url(${src})`;
 
-    this.toggleStatus(UI.status.UPLOADING);
+    this.toggleStatus(STATUS.UPLOADING);
   }
 
   /**
@@ -288,7 +164,7 @@ export default class UI {
    */
   hidePreloader() {
     this.nodes.imagePreloader.style.backgroundImage = "";
-    this.toggleStatus(UI.status.EMPTY);
+    this.toggleStatus(STATUS.EMPTY);
   }
 
   /**
@@ -300,10 +176,7 @@ export default class UI {
      * Check for a source extension to compose element correctly: video tag for mp4, img — for others
      */
     const tag = "IMG";
-
-    let attributes = {
-      src: url,
-    };
+    const CSS = this.CSS;
 
     this.imageUrl = url;
     /**
@@ -312,27 +185,21 @@ export default class UI {
      */
     this.nodes.imageWrapper = make("DIV", this.CSS.imageWrapper, {});
     this.nodes.imageInfoLabel = make("DIV", this.CSS.imageInfoLabel, {});
-    this.nodes.imageTopLeftDragger = make(
-      "DIV",
-      this.CSS.imageTopLeftDragger,
-      {}
-    );
-    this.nodes.imageTopRightDragger = make(
-      "DIV",
-      this.CSS.imageTopRightDragger,
-      {}
-    );
+    this.nodes.imageTopLeftDragger = make("DIV", CSS.imageTopLeftDragger, {});
+    this.nodes.imageTopRightDragger = make("DIV", CSS.imageTopRightDragger, {});
     this.nodes.imageBottomLeftDragger = make(
       "DIV",
-      this.CSS.imageBottomLeftDragger,
+      CSS.imageBottomLeftDragger,
       {}
     );
     this.nodes.imageBottomRightDragger = make(
       "DIV",
-      this.CSS.imageBottomRightDragger,
+      CSS.imageBottomRightDragger,
       {}
     );
-    this.nodes.imageEl = make(tag, this.CSS.imageEl, attributes);
+    this.nodes.imageEl = make(tag, CSS.imageEl, {
+      src: url,
+    });
 
     /**
      * Add load event listener
@@ -359,7 +226,7 @@ export default class UI {
   imageOnLoad() {
     loadJS(resizeScript, this.initResizeHandler.bind(this), document.body);
 
-    this.toggleStatus(UI.status.FILLED);
+    this.toggleStatus(STATUS.FILLED);
     // eslint-disable-next-line no-undef
 
     /**
@@ -467,11 +334,11 @@ export default class UI {
    * @param {string} status - see {@link UI.status} constants
    */
   toggleStatus(status) {
-    for (const statusType in UI.status) {
-      if (UI.status.hasOwnProperty(statusType)) {
+    for (const statusType in STATUS) {
+      if (STATUS.hasOwnProperty(statusType)) {
         this.nodes.wrapper.classList.toggle(
-          `${this.CSS.wrapper}--${UI.status[statusType]}`,
-          status === UI.status[statusType]
+          `${this.CSS.wrapper}--${STATUS[statusType]}`,
+          status === STATUS[statusType]
         );
       }
     }
