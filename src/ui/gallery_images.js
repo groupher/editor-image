@@ -27,7 +27,7 @@ import { TMP_PIC } from "../constant";
  *  - add notes / drag position etc..
  *  - apply tune view
  */
-export default class Gallery {
+export default class GalleryImages {
   /**
    * @param {object} api - Editor.js API
    */

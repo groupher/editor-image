@@ -27,7 +27,7 @@ import { TMP_PIC } from "../constant";
  *  - add notes / drag position etc..
  *  - apply tune view
  */
-export default class Jiugongge {
+export default class JiugonggeImages {
   /**
    * @param {object} api - Editor.js API
    */
@@ -42,6 +42,9 @@ export default class Jiugongge {
     this._data = {};
 
     this.draggingImage = null;
+    /**
+     * the lightbox for image preview
+     */
     this.previewer = GLightbox({ loop: true });
   }
 

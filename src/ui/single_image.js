@@ -1,9 +1,27 @@
 import { loadJS, loadCSS, make } from "@groupher/editor-utils";
+import GLightbox from "gLightbox";
 
 import { STATUS } from "../constant";
 
 // import interact from 'interactjs';
 import ButtonIcon from "../icon/button-icon.svg";
+
+/**
+ * @typedef {Object} ImageToolData
+ * @description Table Tool's  data format
+ * @property {number} columnCount — column count
+ * @property {String} mode - single | jiugongge | gallery
+ * @property {[ImageItem]} items - array of cell item
+ */
+
+/**
+ * @typedef {Object} ImageItem
+ * @description image item
+ * @property {String} src - image src link address
+ * @property {String} desc
+ * @property {String} width
+ * @property {String} height
+ */
 
 const resizeScript =
   "https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js";
@@ -14,13 +32,13 @@ const resizeScript =
  *  - show/hide preview
  *  - apply tune view
  */
-export default class Single {
+export default class SingleImage {
   /**
    * @param {object} api - Editor.js API
    * @param {ImageConfig} config - user config
    * @param {function} onSelectFile - callback for clicks on Select file buttor
    */
-  constructor({ api, config, onSelectFile, onStyleChange }) {
+  constructor({ api, data, config, onSelectFile, onStyleChange }) {
     this.api = api;
     this.i18n = config.i18n || "en";
     this.config = config;
@@ -31,6 +49,31 @@ export default class Single {
 
     this.initWidth = "100%";
     this.initHeight = "auto";
+
+    this.nodes = {};
+    this.initNodes(data);
+
+    /**
+     * image ratio, to keep image shape when resize
+     */
+    this.imageRatio = 1;
+
+    /**
+     * the lightbox for image preview
+     */
+    this.previewer = GLightbox();
+  }
+
+  /**
+   * init html notes
+   *
+   * @memberof SingleImage
+   */
+  initNodes(data) {
+    let caption = "";
+    if (data.items[0]) {
+      caption = data.items[0].desc || "";
+    }
 
     this.nodes = {
       wrapper: make("div", [this.CSS.baseClass, this.CSS.wrapper]),
@@ -46,20 +89,9 @@ export default class Single {
       imagePreloader: make("div", this.CSS.imagePreloader),
       caption: make("div", [this.CSS.input, this.CSS.caption], {
         contentEditable: true,
-      }),
-      downloadLinkEl: make("a", ["hello"], {
-        href: "",
-        target: "_blank",
-        download: true,
-        rel: "noreferrer",
+        innerHTML: caption,
       }),
     };
-
-    /**
-     * image ratio, to keep image shape when resize
-     */
-    this.imageRatio = 1;
-
     /**
      * Create base structure
      *  <wrapper>
@@ -105,28 +137,15 @@ export default class Single {
   }
 
   /**
-   * UI statuses:
-   * - empty
-   * - uploading
-   * - filled
-   * @return {{EMPTY: string, UPLOADING: string, FILLED: string}}
-   */
-  static get status() {
-    return {
-      EMPTY: "empty",
-      UPLOADING: "loading",
-      FILLED: "filled",
-    };
-  }
-
-  /**
    * @param {ImageToolData} toolData
    * @return {HTMLDivElement}
    */
   render(toolData) {
     const url = toolData.items[0].src;
+    console.log("render single: ", toolData);
 
-    this.fillImage(url);
+    this.initNodes(toolData);
+    this.fillImage(toolData.items[0]);
 
     return this.nodes.wrapper;
   }
@@ -142,10 +161,7 @@ export default class Single {
     button.innerHTML =
       this.config.buttonContent || `${ButtonIcon} ${selectText}`;
 
-    button.addEventListener("click", () => {
-      console.log("clicked fuck");
-      this.onSelectFile();
-    });
+    button.addEventListener("click", () => this.onSelectFile());
 
     return button;
   }
@@ -170,37 +186,27 @@ export default class Single {
 
   /**
    * Shows an image
-   * @param {string} url
+   * @param {ImageItem} item
    */
-  fillImage(url) {
-    /**
-     * Check for a source extension to compose element correctly: video tag for mp4, img — for others
-     */
-    const tag = "IMG";
+  fillImage(item) {
     const CSS = this.CSS;
+    console.log(">> fill image: ", item);
 
-    this.imageUrl = url;
+    this.imageUrl = item.src;
     /**
      * Compose tag with defined attributes
      * @type {Element}
      */
-    this.nodes.imageWrapper = make("DIV", this.CSS.imageWrapper, {});
-    this.nodes.imageInfoLabel = make("DIV", this.CSS.imageInfoLabel, {});
-    this.nodes.imageTopLeftDragger = make("DIV", CSS.imageTopLeftDragger, {});
-    this.nodes.imageTopRightDragger = make("DIV", CSS.imageTopRightDragger, {});
-    this.nodes.imageBottomLeftDragger = make(
-      "DIV",
-      CSS.imageBottomLeftDragger,
-      {}
-    );
+    this.nodes.imageWrapper = make("DIV", CSS.imageWrapper);
+    this.nodes.imageInfoLabel = make("DIV", CSS.imageInfoLabel);
+    this.nodes.imageTopLeftDragger = make("DIV", CSS.imageTopLeftDragger);
+    this.nodes.imageTopRightDragger = make("DIV", CSS.imageTopRightDragger);
+    this.nodes.imageBottomLeftDragger = make("DIV", CSS.imageBottomLeftDragger);
     this.nodes.imageBottomRightDragger = make(
       "DIV",
-      CSS.imageBottomRightDragger,
-      {}
+      CSS.imageBottomRightDragger
     );
-    this.nodes.imageEl = make(tag, CSS.imageEl, {
-      src: url,
-    });
+    this.nodes.imageEl = make("img", CSS.imageEl, { src: item.src });
 
     /**
      * Add load event listener
@@ -217,7 +223,17 @@ export default class Single {
     this.nodes.imageWrapper.appendChild(this.nodes.imageBottomRightDragger);
     this.nodes.imageWrapper.appendChild(this.nodes.imageEl);
     this.nodes.imageContainer.appendChild(this.nodes.imageWrapper);
-    // this.nodes.imageContainer.appendChild(this.nodes.imageEl);
+
+    this.nodes.imageEl.addEventListener("click", () => {
+      this.previewer.setElements([
+        {
+          href: item.src,
+          type: "image",
+          description: item.desc,
+        },
+      ]);
+      this.previewer.open();
+    });
   }
 
   /**

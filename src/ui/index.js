@@ -132,6 +132,7 @@ export default class UI {
     //
     this.singleImage = new SingleImage({
       api,
+      data,
       config,
       onSelectFile,
       onStyleChange,

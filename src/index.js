@@ -348,13 +348,13 @@ export default class ImageTool {
    *
    * @param {object} file - uploaded file data
    */
-  set image(file) {
-    this._data.file = file || {};
+  // set image(file) {
+  //   this._data.file = file || {};
 
-    if (file && file.url) {
-      this.ui.fillImage(file.url);
-    }
-  }
+  //   if (file && file.url) {
+  //     this.ui.fillImage(file.url);
+  //   }
+  // }
 
   /**
    * File uploading callback
