@@ -1,4 +1,5 @@
 import { loadJS, loadCSS, make } from "@groupher/editor-utils";
+
 import { STATUS } from "../constant";
 
 // import interact from 'interactjs';
@@ -136,7 +137,7 @@ export default class Single {
    */
   createFileButton() {
     let button = make("div", [this.CSS.button]);
-    const selectText = "选择图片";
+    const selectText = "本体上传";
 
     button.innerHTML =
       this.config.buttonContent || `${ButtonIcon} ${selectText}`;

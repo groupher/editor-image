@@ -1,6 +1,11 @@
 import { loadJS, loadCSS, make } from "@groupher/editor-utils";
+import tippy from "tippy.js";
+import "tippy.js/dist/tippy.css";
+import "tippy.js/themes/light.css";
+
 // import interact from 'interactjs';
-import ButtonIcon from "../icon/button-icon.svg";
+import UploadIcon from "../icon/upload.svg";
+import LinkIcon from "../icon/link-add.svg";
 
 import SingleIcon from "../icon/single.svg";
 import GalleryIcon from "../icon/gallery.svg";
@@ -11,6 +16,25 @@ import { TMP_PIC, MODE } from "../constant";
 import SingleImage from "./single_image";
 import JiugonggeImages from "./jiugongge_images";
 import GalleryImages from "./gallery_images";
+
+import { getExternalLinkPopoverOptions } from "./helper";
+
+/**
+ * @typedef {Object} ImageToolData
+ * @description Table Tool's  data format
+ * @property {number} columnCount — column count
+ * @property {String} mode - single | jiugongge | gallery
+ * @property {[ImageItem]} items - array of cell item
+ */
+
+/**
+ * @typedef {Object} ImageItem
+ * @description image item
+ * @property {String} src - image src link address
+ * @property {String} desc
+ * @property {String} width
+ * @property {String} height
+ */
 
 const resizeScript =
   "https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js";
@@ -27,7 +51,7 @@ export default class UI {
    * @param {ImageConfig} config - user config
    * @param {function} onSelectFile - callback for clicks on Select file buttor
    */
-  constructor({ api, config, onSelectFile, onStyleChange, reRender }) {
+  constructor({ api, config, data, onSelectFile, onStyleChange, reRender }) {
     this.api = api;
     this.i18n = config.i18n || "en";
     this.config = config;
@@ -40,6 +64,7 @@ export default class UI {
     this.initWidth = "100%";
     this.initHeight = "auto";
 
+    this._data = data;
     this.settings = [
       {
         raw: MODE.SINGLE,
@@ -61,7 +86,7 @@ export default class UI {
     this.nodes = {
       wrapper: make("div", [this.CSS.baseClass, this.CSS.wrapper]),
       imageContainer: make("div", [this.CSS.imageContainer]),
-      fileButton: undefined, // this.createFileButton(),
+      fileButton: undefined,
       imageWrapper: undefined,
       imageTopLeftDragger: undefined,
       imageTopRightDragger: undefined,
@@ -101,7 +126,8 @@ export default class UI {
     this.nodes.wrapper.appendChild(this.nodes.imageContainer);
     this.nodes.wrapper.appendChild(this.nodes.caption);
     //
-    // this.nodes.wrapper.appendChild(this.nodes.fileButton);
+    this.nodes.fileButton = this.createUploadButton(this._data);
+    this.nodes.wrapper.appendChild(this.nodes.fileButton);
 
     //
     this.singleImage = new SingleImage({
@@ -135,6 +161,14 @@ export default class UI {
        * Tool's classes
        */
       wrapper: "image-tool",
+      mainUploadBox: "image-tool__main_upload_box",
+      mainUploadBoxIcon: "image-tool__main_upload_box_icon",
+      mainUploadBoxIconSmall: "image-tool__main_upload_box_icon_small",
+      mainUploadInfo: "image-tool__main_upload_box_info",
+      mainUploadButton: "image-tool__main_upload_box_button",
+      mainUploadButtonTitle: "image-tool__main_upload_box_button_title",
+      mainUploadButtonDesc: "image-tool__main_upload_box_button_desc",
+
       imageContainer: "image-tool__image",
       imagePreloader: "image-tool__image-preloader",
       imageWrapper: "image-tool__image-wrapper",
@@ -172,6 +206,10 @@ export default class UI {
    * @return {HTMLDivElement}
    */
   render(toolData) {
+    if (toolData.items.length === 0) {
+      return this.renderBack(toolData);
+    }
+
     this._data = toolData;
 
     switch (toolData.mode) {
@@ -198,14 +236,22 @@ export default class UI {
    * @param {ImageToolData} toolData
    * @return {HTMLDivElement}
    */
-  renderBak(toolData) {
-    if (!toolData.file || Object.keys(toolData.file).length === 0) {
-      this.toggleStatus(UI.status.EMPTY);
-    } else {
-      // this.toggleStatus(UI.status.UPLOADING);
-      this.toggleStatus(UI.status.FILLED);
-      this.fillImage(toolData.file.url);
-    }
+  renderBack(toolData) {
+    this._data = toolData;
+
+    this.toggleStatus(UI.status.EMPTY);
+    // if (!toolData.file || Object.keys(toolData.file).length === 0) {
+    //   console.log("b2");
+    //   this.toggleStatus(UI.status.EMPTY);
+    // } else {
+    //   console.log("b3");
+    //   // this.toggleStatus(UI.status.UPLOADING);
+    //   this.toggleStatus(UI.status.FILLED);
+    //   this.fillImage(toolData.file.url);
+    // }
+
+    // this.toggleStatus(UI.status.FILLED);
+    // this.fillImage(toolData.file.url);
 
     return this.nodes.wrapper;
   }
@@ -258,19 +304,58 @@ export default class UI {
    * Creates upload-file button
    * @return {Element}
    */
-  createFileButton() {
-    let button = make("div", [this.CSS.button]);
-    const selectText = "选择图片";
-
-    button.innerHTML =
-      this.config.buttonContent || `${ButtonIcon} ${selectText}`;
-
-    button.addEventListener("click", () => {
-      console.log("clicked fuck");
-      this.onSelectFile();
+  createUploadButton(data) {
+    const WrapperEl = make("div", [this.CSS.mainUploadBox, this.CSS.button]);
+    const UploadDesIcon = make("div", this.CSS.mainUploadBoxIcon, {
+      innerHTML: UploadIcon,
     });
 
-    return button;
+    const UploadButtonEl = make("div", [this.CSS.mainUploadButton]);
+
+    const UploadInfoEl = make("div", [this.CSS.mainUploadInfo]);
+    const UploadTitleEl = make("div", [this.CSS.mainUploadButtonTitle], {
+      innerHTML: "本地上传",
+    });
+    const UploadDescEl = make("div", [this.CSS.mainUploadButtonDesc], {
+      innerHTML: "jpg, png, gif 等常见格式, 最大 500 KB",
+    });
+
+    UploadInfoEl.appendChild(UploadTitleEl);
+    UploadInfoEl.appendChild(UploadDescEl);
+
+    UploadButtonEl.appendChild(UploadDesIcon);
+    UploadButtonEl.appendChild(UploadInfoEl);
+
+    const LinkDesIcon = make("div", this.CSS.mainUploadBoxIconSmall, {
+      innerHTML: LinkIcon,
+    });
+    const LinkButtonEl = make("div", [this.CSS.mainUploadButton]);
+
+    const LinkInfoEl = make("div", [this.CSS.mainUploadInfo]);
+    const LinkTitleEl = make("div", [this.CSS.mainUploadButtonTitle], {
+      innerHTML: "外部链接",
+    });
+    const LinkDescEl = make("div", [this.CSS.mainUploadButtonDesc], {
+      innerHTML: "外部图片链接地址",
+    });
+
+    LinkInfoEl.appendChild(LinkTitleEl);
+    LinkInfoEl.appendChild(LinkDescEl);
+
+    LinkButtonEl.appendChild(LinkDesIcon);
+    LinkButtonEl.appendChild(LinkInfoEl);
+
+    tippy(
+      LinkButtonEl,
+      getExternalLinkPopoverOptions(data, 0, (data) => this.reRender(data))
+    );
+
+    WrapperEl.appendChild(UploadButtonEl);
+    WrapperEl.appendChild(LinkButtonEl);
+
+    UploadButtonEl.addEventListener("click", () => this.onSelectFile());
+
+    return WrapperEl;
   }
 
   /**
@@ -487,5 +572,15 @@ export default class UI {
       `${this.CSS.wrapper}--${tuneName}`,
       status
     );
+  }
+
+  /**
+   * saving data
+   *
+   * @readonly
+   * @memberof UI
+   */
+  get data() {
+    return this._data;
   }
 }

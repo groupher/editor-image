@@ -123,12 +123,29 @@ export default class ImageTool {
       onError: (error) => this.uploadingFailed(error),
     });
 
+    this._data = {
+      style: "jiugongge", // gallery, phoneGallery,
+      mode: "single", // "jiugongge",
+      items: [],
+    };
+
+    // for (let i = 0; i < 5; i++) {
+    //   this._data.items.push({
+    //     index: i,
+    //     src: TMP_PIC[i],
+    //     desc: i === 0 ? "我是一条描述信息，这是我的尾巴" : "",
+    //     // width: "",
+    //     // height: "",
+    //   });
+    // }
+
     /**
      * Module for working with UI
      */
     this.ui = new UI({
       api,
       config: this.config,
+      data: this._data,
       reRender: this.reRender.bind(this),
       onSelectFile: () => {
         this.uploader.uploadSelectedFile({
@@ -152,22 +169,6 @@ export default class ImageTool {
     //   },
     // };
 
-    this._data = {
-      style: "jiugongge", // gallery, phoneGallery,
-      mode: "jiugongge",
-      items: [],
-    };
-
-    for (let i = 0; i < 5; i++) {
-      this._data.items.push({
-        index: i,
-        src: TMP_PIC[i],
-        desc: i === 0 ? "我是一条描述信息，这是我的尾巴" : "",
-        // width: "",
-        // height: "",
-      });
-    }
-
     this.element = null;
   }
 
@@ -187,6 +188,7 @@ export default class ImageTool {
    * @param {ImageToolData} toolData
    */
   reRender(data) {
+    console.log("# reRender data: ", data);
     this._data = data;
     this.replaceElement(this.ui.render(this._data));
   }
@@ -326,7 +328,18 @@ export default class ImageTool {
    * @return {ImageToolData} data
    */
   get data() {
-    return this._data;
+    return this.ui.data;
+  }
+
+  /**
+   * Return Block data
+   * @public
+   *
+   * @return {TableData}
+   */
+  save() {
+    console.log("# image saving: ", this.ui.data);
+    return this.ui.data;
   }
 
   /**

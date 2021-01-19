@@ -33,6 +33,135 @@
   margin-top: 20px;
   margin-bottom: 20px;
 
+  &__main_upload_box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 65px;
+    padding: 0;
+
+    &:hover {
+      background: #ffffff;
+    }
+
+    &_info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-left: 15px;
+    }
+
+    &_icon {
+      svg {
+        width: 24px;
+        height: 24px;
+        margin-top: 0;
+        margin-right: 0;
+      }
+    }
+
+    &_icon_small {
+      svg {
+        width: 21px;
+        height: 21px;
+        margin-top: 0;
+        margin-right: 0;
+      }
+    }
+
+    &_button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50%;
+      height: 100%;
+
+      &:hover {
+        background: #fbfcfe;
+      }
+
+      &_title {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      &_desc {
+        font-size: 12px;
+        margin-top: 2px;
+      }
+    }
+  }
+
+  &__popover {
+    margin-top: 8px;
+    margin: 5px;
+    max-width: 300px;
+    &_input_wrapper {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+
+      &_input {
+        flex-grow: 1;
+        border: 1px solid #e5e5e7;
+        width: 100%;
+        height: 32px;
+        min-width: 240px;
+        outline: none;
+        border-radius: 4px;
+        padding: 0 5px;
+
+        &:focus {
+          border: 1px solid grey;
+        }
+
+        transition: width 0.25s;
+      }
+      &_confirm {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 28px;
+        margin-left: 5px;
+        background: #fbfcfe;
+        border: 1px solid;
+        border-color: #e4e4e6;
+        border-radius: 4px;
+        box-shadow: 0 2px 2px 0 rgba(18, 30, 57, 0.04);
+        cursor: pointer;
+
+        svg {
+          fill: grey;
+          width: 15px;
+          height: 15px;
+          margin-left: 3px;
+          margin-top: 1px;
+        }
+      }
+    }
+
+    &_note {
+      font-size: 12px;
+      color: #b7b7b7;
+    }
+
+    &_error {
+      display: none;
+      font-size: 12px;
+      color: tomato;
+      text-align: left;
+      margin-top: 4px;
+
+      svg {
+        fill: tomato;
+        width: 10px;
+        height: 10px;
+      }
+    }
+  }
+
   &__image {
     border-radius: 3px;
     overflow: hidden;
