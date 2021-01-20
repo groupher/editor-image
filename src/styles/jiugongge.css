@@ -143,7 +143,7 @@
     }
   }
 
-  &__jiugongge_adder_block {
+  &__jiugongge_adder {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -182,7 +182,7 @@
       justify-content: center;
       opacity: 0;
       position: absolute;
-      bottom: 0;
+      bottom: 10px;
       padding-bottom: 10px;
 
       /* background: white; */
@@ -205,7 +205,6 @@
 
       &:hover {
         color: grey;
-        filter: brightness(0.8);
         cursor: pointer;
       }
 

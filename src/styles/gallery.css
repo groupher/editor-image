@@ -97,39 +97,6 @@
         cursor: pointer;
       }
     }
-
-    &:hover &_adder_block {
-      opacity: 1;
-    }
-
-    &_adder_block {
-      opacity: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      width: 42px;
-      height: 44px;
-      border-radius: 2px;
-      background: #f7f7f7;
-
-      &_upload {
-        svg {
-          fill: lightgrey;
-          width: 20px;
-          height: 20px;
-          display: block;
-        }
-
-        &:hover {
-          filter: brightness(0.8);
-          cursor: pointer;
-        }
-
-        transition: all 0.25s;
-      }
-    }
   }
 
   &__gallery_block {
@@ -197,6 +164,72 @@
           width: 11px;
           height: 11px;
         }
+      }
+    }
+
+    &_adder {
+      opacity: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      width: 200px;
+      border-radius: 2px;
+      background: #f7f7f7;
+
+      &:hover &_hint {
+        opacity: 1;
+      }
+
+      &_upload {
+        svg {
+          fill: lightgrey;
+          width: 42px;
+          height: 42px;
+          display: block;
+        }
+
+        &:hover {
+          filter: brightness(0.8);
+          cursor: pointer;
+        }
+
+        transition: all 0.25s;
+      }
+      &_hint {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        position: absolute;
+        bottom: 40px;
+        padding-bottom: 10px;
+
+        /* background: white; */
+
+        &__icon {
+          margin-left: -12px;
+          svg {
+            fill: lightgrey;
+            width: 13px;
+            height: 13px;
+            display: block;
+          }
+        }
+
+        &__text {
+          font-size: 13px;
+          color: lightgrey;
+          margin-left: 8px;
+        }
+
+        &:hover {
+          color: grey;
+          cursor: pointer;
+        }
+
+        transition: all 0.25s ease-out;
       }
     }
   }

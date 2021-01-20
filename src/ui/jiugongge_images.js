@@ -1,5 +1,6 @@
 import { make, clazz, swapArrayItems } from "@groupher/editor-utils";
 import GLightbox from "gLightbox";
+import { remove } from "ramda";
 
 import tippy, { hideAll } from "tippy.js";
 
@@ -9,8 +10,6 @@ import "tippy.js/themes/light.css";
 // eslint-disable-next-line
 import glightboxCss from "glightbox/dist/css/glightbox.min.css";
 
-import { remove } from "ramda";
-
 // eslint-disable-next-line
 import css from "../styles/jiugongge.css";
 import UploadIcon from "../icon/upload.svg";
@@ -19,6 +18,7 @@ import LinkAddIcon from "../icon/link-add.svg";
 import PenIcon from "../icon/pen.svg";
 import DeleteIcon from "../icon/delete.svg";
 
+import { getExternalLinkPopoverOptions } from "./helper";
 import { TMP_PIC } from "../constant";
 
 /**
@@ -31,7 +31,7 @@ export default class JiugonggeImages {
   /**
    * @param {object} api - Editor.js API
    */
-  constructor({ api, reRender }) {
+  constructor({ api, data, reRender }) {
     this.api = api;
     this.reRender = reRender;
 
@@ -39,7 +39,7 @@ export default class JiugonggeImages {
       wrapper: null,
     };
 
-    this._data = {};
+    this._data = data;
 
     this.draggingImage = null;
     /**
@@ -70,11 +70,11 @@ export default class JiugonggeImages {
       toolbarIcon: "image-tool__jiugongge_block_toolbar__icon",
       toolbarSmallIcon: "image-tool__jiugongge_block_toolbar__icon_small",
 
-      adderBlock: "image-tool__jiugongge_adder_block",
-      upload: "image-tool__jiugongge_adder_block_upload",
-      hint: "image-tool__jiugongge_adder_block_hint",
-      hintIcon: "image-tool__jiugongge_adder_block_hint__icon",
-      hintText: "image-tool__jiugongge_adder_block_hint__text",
+      adderBlock: "image-tool__jiugongge_adder",
+      upload: "image-tool__jiugongge_adder_upload",
+      hint: "image-tool__jiugongge_adder_hint",
+      hintIcon: "image-tool__jiugongge_adder_hint__icon",
+      hintText: "image-tool__jiugongge_adder_hint__text",
 
       //
       descPopover: "image-tool__desc_popover",
@@ -108,7 +108,7 @@ export default class JiugonggeImages {
         const imageElements = sortedItems.map((item) => ({
           href: item.src,
           type: "image",
-          description: item.desc,
+          description: item.desc || "",
         }));
 
         this.previewer.setElements(imageElements);
@@ -166,7 +166,7 @@ export default class JiugonggeImages {
       BlockEl.appendChild(this._drawInlineToolbar(i, item.desc));
 
       // hide all popover when leave
-      BlockEl.addEventListener("mouseleave", () => hideAll());
+      // BlockEl.addEventListener("mouseleave", () => hideAll());
 
       this.nodes.wrapper.appendChild(BlockEl);
     }
@@ -353,6 +353,7 @@ export default class JiugonggeImages {
     });
 
     UploadIconEl.addEventListener("click", () => {
+      // TODO: select local file
       this._addLocalPicture();
     });
 
@@ -363,8 +364,15 @@ export default class JiugonggeImages {
     });
 
     const HintTextEl = make("div", this.CSS.hintText, {
-      innerHTML: "图片链接",
+      innerHTML: "外部链接",
     });
+
+    tippy(
+      HintTextEl,
+      getExternalLinkPopoverOptions(this._data, -1, (data) =>
+        this.reRender(data)
+      )
+    );
 
     HintEl.appendChild(HintIconEl);
     HintEl.appendChild(HintTextEl);
@@ -372,7 +380,8 @@ export default class JiugonggeImages {
     AdderEl.appendChild(UploadIconEl);
     AdderEl.appendChild(HintEl);
 
-    this.api.tooltip.onHover(HintEl, "通过连接添加图片", { delay: 1000 });
+    // hide all popover when leave
+    AdderEl.addEventListener("mouseleave", () => hideAll());
 
     return AdderEl;
   }

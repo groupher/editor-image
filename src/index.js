@@ -86,7 +86,7 @@ export default class ImageTool {
   static get toolbox() {
     return {
       icon: ToolboxIcon,
-      title: this.i18n === "en" ? "Image" : "图片",
+      title: this.i18n === "en" ? "Image" : "图片（集）",
     };
   }
 
@@ -125,19 +125,19 @@ export default class ImageTool {
 
     this._data = {
       style: "jiugongge", // gallery, phoneGallery,
-      mode: "single", // "jiugongge",
+      mode: "gallery", // "jiugongge",
       items: [],
     };
 
-    // for (let i = 0; i < 5; i++) {
-    //   this._data.items.push({
-    //     index: i,
-    //     src: TMP_PIC[i],
-    //     desc: i === 0 ? "我是一条描述信息，这是我的尾巴" : "",
-    //     // width: "",
-    //     // height: "",
-    //   });
-    // }
+    for (let i = 0; i < 2; i++) {
+      this._data.items.push({
+        index: i,
+        src: TMP_PIC[i],
+        desc: i === 0 ? "我是一条描述信息，这是我的尾巴" : "",
+        // width: "",
+        // height: "",
+      });
+    }
 
     /**
      * Module for working with UI
@@ -188,7 +188,6 @@ export default class ImageTool {
    * @param {ImageToolData} toolData
    */
   reRender(data) {
-    console.log("# reRender data: ", data);
     this._data = data;
     this.replaceElement(this.ui.render(this._data));
   }

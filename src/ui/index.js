@@ -139,10 +139,12 @@ export default class UI {
     });
     this.jiugongeImages = new JiugonggeImages({
       api,
+      data,
       reRender: reRender,
     });
     this.galleryImages = new GalleryImages({
       api,
+      data,
       reRender: reRender,
     });
   }

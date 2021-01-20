@@ -4,7 +4,7 @@ import ConfirmIcon from "../icon/confirm.svg";
 import NoticeMarkIcon from "../icon/notice-mark.svg";
 
 /**
- * @typedef {Object} ImageData
+ * @typedef {Object} ImageToolData
  * @description Table Tool's  data format
  * @property {number} columnCount — column count
  * @property {String} mode - single | jiugongge | gallery
@@ -34,7 +34,7 @@ const CSS = {
  * draw desc input popover format for given picture index
  *
  * @param {Number} index - picture index
- * @param {ImageData} data - imageToolData
+ * @param {ImageToolData} data - imageToolData
  * @param {HTMLElement} node - the root node of image tool
  * @param {Function} blurCallback - blur call back
  * @returns
@@ -76,7 +76,7 @@ export const getDescInputPopoverOptions = (index, data, node, blurCallback) => {
  * draw desc input popover format for given picture index
  *
  * @param {Number} index - picture index
- * @param {ImageData} data - imageToolData
+ * @param {ImageToolData} data - imageToolData
  * @param {HTMLElement} node - the root node of image tool
  * @returns {Object} - tippy options
  */
@@ -102,7 +102,12 @@ export const getExternalLinkPopoverOptions = (data, index, callback) => {
   });
 
   ConfirmBtnEl.addEventListener("click", () => {
-    if (!data.items[index]) {
+    if (index === -1) {
+      // -1 means add new image link
+      data.items.push({ src: inputVal });
+      callback(data);
+    } else if (!data.items[index]) {
+      // when items is empty, like first init
       callback({
         ...data,
         items: [
@@ -112,6 +117,7 @@ export const getExternalLinkPopoverOptions = (data, index, callback) => {
         ],
       });
     } else {
+      // means update existed image link
       item.src = inputVal;
       callback(data);
     }

@@ -19,6 +19,7 @@ import LinkAddIcon from "../icon/link-add.svg";
 import PenIcon from "../icon/pen.svg";
 import DeleteIcon from "../icon/delete.svg";
 
+import { getExternalLinkPopoverOptions } from "./helper";
 import { TMP_PIC } from "../constant";
 
 /**
@@ -31,7 +32,7 @@ export default class GalleryImages {
   /**
    * @param {object} api - Editor.js API
    */
-  constructor({ api, reRender }) {
+  constructor({ api, data, reRender }) {
     this.api = api;
     this.reRender = reRender;
 
@@ -39,7 +40,7 @@ export default class GalleryImages {
       wrapper: null,
     };
 
-    this._data = {};
+    this._data = data;
 
     this.previewer = GLightbox({ loop: true });
     this.draggingImage = null;
@@ -66,15 +67,18 @@ export default class GalleryImages {
       miniMap: "image-tool__gallery_minimap",
       miniMapBlock: "image-tool__gallery_minimap_block",
 
-      adderBlock: "image-tool__gallery_minimap_adder_block",
-      upload: "image-tool__gallery_minimap_adder_block_upload",
-
       block: "image-tool__gallery_block",
       image: "image-tool__gallery_block_image",
       toolbar: "image-tool__gallery_block_toolbar",
       toolbarDesc: "image-tool__gallery_block_toolbar__desc",
       toolbarIcon: "image-tool__gallery_block_toolbar__icon",
       toolbarSmallIcon: "image-tool__gallery_block_toolbar__icon_small",
+
+      adderBlock: "image-tool__gallery_block_adder",
+      upload: "image-tool__gallery_block_adder_upload",
+      hint: "image-tool__gallery_block_adder_hint",
+      hintIcon: "image-tool__gallery_block_adder_hint__icon",
+      hintText: "image-tool__gallery_block_adder_hint__text",
 
       //
       descPopover: "image-tool__desc_popover",
@@ -112,7 +116,7 @@ export default class GalleryImages {
         const imageElements = sortedItems.map((item) => ({
           href: item.src,
           type: "image",
-          description: item.desc,
+          description: item.desc || "",
         }));
 
         this.previewer.setElements(imageElements);
@@ -134,6 +138,7 @@ export default class GalleryImages {
       MainImagesEl.appendChild(BlockEl);
     }
 
+    MainImagesEl.appendChild(this._drawAdder());
     MainImagesContainer.appendChild(MainImagesEl);
 
     this.nodes.wrapper.appendChild(MainImagesContainer);
@@ -212,8 +217,6 @@ export default class GalleryImages {
 
       MiniMapEl.appendChild(ImageEl);
     }
-
-    MiniMapEl.appendChild(this._drawAdder());
 
     return MiniMapEl;
   }
@@ -392,10 +395,35 @@ export default class GalleryImages {
     });
 
     UploadIconEl.addEventListener("click", () => {
+      // TODO: select local file
       this._addLocalPicture();
     });
 
+    const HintEl = make("div", this.CSS.hint);
+
+    const HintIconEl = make("div", this.CSS.hintIcon, {
+      innerHTML: LinkAddIcon,
+    });
+
+    const HintTextEl = make("div", this.CSS.hintText, {
+      innerHTML: "外部链接",
+    });
+
+    tippy(
+      HintTextEl,
+      getExternalLinkPopoverOptions(this._data, -1, (data) =>
+        this.reRender(data)
+      )
+    );
+
+    HintEl.appendChild(HintIconEl);
+    HintEl.appendChild(HintTextEl);
+
     AdderEl.appendChild(UploadIconEl);
+    AdderEl.appendChild(HintEl);
+
+    // hide all popover when leave
+    AdderEl.addEventListener("mouseleave", () => hideAll());
 
     return AdderEl;
   }
