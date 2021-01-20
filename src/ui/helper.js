@@ -92,7 +92,7 @@ export const getExternalLinkPopoverOptions = (data, index, callback) => {
     value: item.src || "",
   });
   const NoteEl = make("div", CSS.popoverLinkNote, {
-    innerHTML: "请确保该链接支持外链，否则图片可能无法正常显示",
+    innerHTML: "请确保该地址支持外链，否则图片可能无法正常显示",
   });
   const ErrorEl = make("div", CSS.popoverErrorMsg, {
     innerHTML: `${NoticeMarkIcon}请输入合法的 https:// 格式的链接。`,

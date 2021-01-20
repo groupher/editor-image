@@ -49,7 +49,7 @@ export default class UI {
   /**
    * @param {object} api - Editor.js API
    * @param {ImageConfig} config - user config
-   * @param {function} onSelectFile - callback for clicks on Select file buttor
+   * @param {function} onSelectFile - callback for clicks on Select file button
    */
   constructor({ api, config, data, onSelectFile, onStyleChange, reRender }) {
     this.api = api;
@@ -108,7 +108,7 @@ export default class UI {
     this.nodes.imageContainer.appendChild(this.nodes.imagePreloader);
     this.nodes.wrapper.appendChild(this.nodes.imageContainer);
     //
-    this.nodes.fileButton = this.createUploadButton(this._data);
+    this.nodes.fileButton = this.drawUploadButton(this._data);
     this.nodes.wrapper.appendChild(this.nodes.fileButton);
 
     //
@@ -273,10 +273,10 @@ export default class UI {
   }
 
   /**
-   * Creates upload-file button
+   * draw upload-file button
    * @return {Element}
    */
-  createUploadButton(data) {
+  drawUploadButton(data) {
     const WrapperEl = make("div", [this.CSS.mainUploadBox, this.CSS.button]);
     const UploadDesIcon = make("div", this.CSS.mainUploadBoxIcon, {
       innerHTML: UploadIcon,
