@@ -129,15 +129,15 @@ export default class ImageTool {
       items: [],
     };
 
-    for (let i = 0; i < 2; i++) {
-      this._data.items.push({
-        index: i,
-        src: TMP_PIC[i],
-        desc: i === 0 ? "我是一条描述信息，这是我的尾巴" : "",
-        // width: "",
-        // height: "",
-      });
-    }
+    // for (let i = 0; i < 2; i++) {
+    //   this._data.items.push({
+    //     index: i,
+    //     src: TMP_PIC[i],
+    //     desc: i === 0 ? "我是一条描述信息，这是我的尾巴" : "",
+    //     // width: "",
+    //     // height: "",
+    //   });
+    // }
 
     /**
      * Module for working with UI

@@ -65,7 +65,7 @@ export default class SingleImage {
   }
 
   /**
-   * init html notes
+   * draw single image view, include resize handlers
    *
    * @memberof SingleImage
    */
