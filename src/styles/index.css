@@ -300,28 +300,38 @@
     min-width: 100px;
     max-width: 300px;
     height: 20px;
-    background: #69737d;
     color: white;
     border-radius: 3px;
     font-size: 11px;
     opacity: 0.8;
 
-    &::after {
-      content: "";
-      position: absolute;
-      z-index: 3;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      border: 2px solid #69737d;
-      border-top-color: white;
-      left: 50%;
-      top: 50%;
-      margin-top: -5px;
-      margin-left: -40px;
-      animation: loading-spin 0.5s infinite linear;
-      box-sizing: border-box;
-      opacity: 0.8;
+    &__normal {
+      background: #69737d;
+      &::after {
+        content: "";
+        position: absolute;
+        z-index: 3;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-top-color: white;
+        left: 50%;
+        top: 50%;
+        margin-top: -5px;
+        margin-left: -40px;
+        animation: loading-spin 0.5s infinite linear;
+        box-sizing: border-box;
+        opacity: 0.8;
+      }
+    }
+    &__error {
+      background: tomato;
+      svg {
+        fill: white;
+        width: 10px;
+        height: 10px;
+      }
     }
   }
 }

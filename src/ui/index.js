@@ -1,4 +1,4 @@
-import { loadJS, loadCSS, make } from "@groupher/editor-utils";
+import { loadJS, loadCSS, make, clazz } from "@groupher/editor-utils";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
@@ -9,6 +9,7 @@ import { STATUS } from "../constant";
 
 import UploadIcon from "../icon/upload.svg";
 import LinkIcon from "../icon/link-add.svg";
+import NoticeMarkIcon from "../icon/notice-mark.svg";
 
 import SingleIcon from "../icon/single.svg";
 import GalleryIcon from "../icon/gallery.svg";
@@ -159,7 +160,10 @@ export default class UI {
 
       // hint
       hint: "image-tool__hint-box",
+      hintNormal: "image-tool__hint-box__normal",
+      hintError: "image-tool__hint-box__error",
 
+      // settings
       settingsWrapper: "cdx-settings-panel",
       settingsButton: this.api.styles.settingsButton,
       settingsButtonActive: this.api.styles.settingsButtonActive,
@@ -184,7 +188,7 @@ export default class UI {
    *
    * @memberof UI
    */
-  triggerHint(show, status = "default") {
+  triggerHint(show, status = "normal") {
     if (
       this._data.mode === MODE.JIUGONGGE ||
       this._data.mode === MODE.GALLERY
@@ -192,6 +196,16 @@ export default class UI {
       this.nodes.hint.style.top = "8px";
     } else {
       this.nodes.hint.style.top = "-20px";
+    }
+
+    if (status === "normal") {
+      clazz.remove(this.nodes.hint, this.CSS.hintError);
+      clazz.add(this.nodes.hint, this.CSS.hintNormal);
+      this.nodes.hint.innerHTML = "正在上传";
+    } else {
+      clazz.remove(this.nodes.hint, this.CSS.hintNormal);
+      clazz.add(this.nodes.hint, this.CSS.hintError);
+      this.nodes.hint.innerHTML = `${NoticeMarkIcon} 上传失败`;
     }
 
     show
