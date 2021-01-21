@@ -113,11 +113,9 @@ export default class ImageTool {
       // uploader: config.uploader || undefined,
       uploader: {
         uploadByFile: (files) => {
-          console.log("posting ...");
           this.ui.triggerHint(true);
           return new Promise((resolve) => {
             setTimeout(() => {
-              console.log("post done ...");
               this.ui.triggerHint(false);
               resolve(files);
             }, 3000);
@@ -133,7 +131,7 @@ export default class ImageTool {
     this.uploader = new Uploader({
       config: this.config,
       onUpload: (response) => this.onUpload(response),
-      onError: (error) => this.uploadingFailed(error),
+      onError: (error) => this.uploadingFailed(),
     });
 
     this._data = {
@@ -302,22 +300,26 @@ export default class ImageTool {
           const response = await fetch(image.src);
           const file = await response.blob();
 
+          console.log("onPaste 0");
           this.uploadFile(file);
           break;
         }
 
+        console.log("onPaste 1");
         this.uploadUrl(image.src);
         break;
 
       case "pattern":
         const url = event.detail.data;
 
+        console.log("onPaste 2");
         this.uploadUrl(url);
         break;
 
       case "file":
         const file = event.detail.file;
 
+        console.log("onPaste 3: ", file);
         this.uploadFile(file);
         break;
     }
@@ -395,26 +397,19 @@ export default class ImageTool {
 
       this.reRender(this._data);
     } else {
-      // TODO: error hint
-      this.uploadingFailed("incorrect response: " + JSON.stringify(response));
+      this.uploadingFailed();
     }
   }
 
   /**
    * Handle uploader errors
    * @private
-   *
-   * @param {string} errorText
    */
-  uploadingFailed(errorText) {
+  uploadingFailed() {
     this.ui.triggerHint(true, "error");
     setTimeout(() => {
       this.ui.triggerHint(false);
     }, 5000);
-    // this.api.notifier.show({
-    //   message: "Can not upload an image, try another",
-    //   style: "error",
-    // });
   }
 
   /**
@@ -423,10 +418,14 @@ export default class ImageTool {
    * @param {File} file
    */
   uploadFile(file) {
-    this.uploader.uploadByFile(file, {
-      onPreview: (src) => {
-        //
-      },
+    this.config.uploader.uploadByFile(file).then((files) => {
+      this.onUpload({
+        success: 1,
+        file: {
+          url:
+            "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1607332292931-c15ec25909b0?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=647&q=80",
+        },
+      });
     });
   }
 
