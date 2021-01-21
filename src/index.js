@@ -110,7 +110,20 @@ export default class ImageTool {
       types: config.types || "image/*",
       captionPlaceholder: config.captionPlaceholder || "Caption",
       buttonContent: config.buttonContent || "",
-      uploader: config.uploader || undefined,
+      // uploader: config.uploader || undefined,
+      uploader: {
+        uploadByFile: (files) => {
+          console.log("posting ...");
+          this.ui.triggerHint(true);
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              console.log("post done ...");
+              this.ui.triggerHint(false);
+              resolve(files);
+            }, 3000);
+          });
+        },
+      },
       i18n: config.i18n || "en",
     };
 
@@ -124,8 +137,7 @@ export default class ImageTool {
     });
 
     this._data = {
-      style: "jiugongge", // gallery, phoneGallery,
-      mode: "gallery", // "jiugongge",
+      mode: "single", // "jiugongge",
       items: [],
     };
 
@@ -148,16 +160,25 @@ export default class ImageTool {
       data: this._data,
       reRender: this.reRender.bind(this),
       onSelectFile: () => {
-        this.uploader.uploadSelectedFile({
-          onPreview: (src) => {
-            this.ui.showPreloader(src);
-          },
-        });
+        this.uploader
+          .uploadSelectedFile({
+            onPreview: (src) => {
+              this.ui.triggerHint(true);
+            },
+          })
+          .then((files) => {
+            console.log("> uploadSelectedFile files: ", files);
+            this.ui.triggerHint(false);
+
+            this.onUpload({
+              success: 1,
+              file: {
+                url:
+                  "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1607332292931-c15ec25909b0?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=647&q=80",
+              },
+            });
+          });
       },
-      onStyleChange: debounce((style) => {
-        this._data.style = Object.assign(this._data.style || {}, style);
-        // console.log('this.data: ', this.data)
-      }, 200),
     });
 
     /**
@@ -362,9 +383,19 @@ export default class ImageTool {
    * @param {UploadResponseFormat} response
    */
   onUpload(response) {
+    console.log("# current data:: ", this._data);
+    console.log("the onUpload response: ", response);
+
     if (response.success && response.file) {
-      this.image = response.file;
+      // this.image = response.file;
+      // this.image = response.file;
+      this._data.items.push({
+        src: response.file.url,
+      });
+
+      this.reRender(this._data);
     } else {
+      // TODO: error hint
       this.uploadingFailed("incorrect response: " + JSON.stringify(response));
     }
   }
@@ -376,13 +407,10 @@ export default class ImageTool {
    * @param {string} errorText
    */
   uploadingFailed(errorText) {
-    console.log("Image Tool: uploading failed because of", errorText);
-
     this.api.notifier.show({
       message: "Can not upload an image, try another",
       style: "error",
     });
-    this.ui.hidePreloader();
   }
 
   /**
@@ -393,7 +421,7 @@ export default class ImageTool {
   uploadFile(file) {
     this.uploader.uploadByFile(file, {
       onPreview: (src) => {
-        this.ui.showPreloader(src);
+        //
       },
     });
   }
@@ -404,7 +432,7 @@ export default class ImageTool {
    * @param {string} url
    */
   uploadUrl(url) {
-    this.ui.showPreloader(url);
+    // this.ui.showPreloader(url);
     this.uploader.uploadByUrl(url);
   }
 }

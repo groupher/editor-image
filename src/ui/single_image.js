@@ -38,12 +38,11 @@ export default class SingleImage {
    * @param {ImageConfig} config - user config
    * @param {function} onSelectFile - callback for clicks on Select file buttor
    */
-  constructor({ api, data, config, onSelectFile, onStyleChange }) {
+  constructor({ api, data, config, onSelectFile }) {
     this.api = api;
     this.i18n = config.i18n || "en";
     this.config = config;
     this.onSelectFile = onSelectFile;
-    this.onStyleChange = onStyleChange;
 
     this.imageUrl = "";
 
@@ -142,7 +141,6 @@ export default class SingleImage {
    */
   render(toolData) {
     const url = toolData.items[0].src;
-    console.log("render single: ", toolData);
 
     this.initNodes(toolData);
     this.fillImage(toolData.items[0]);
@@ -190,7 +188,6 @@ export default class SingleImage {
    */
   fillImage(item) {
     const CSS = this.CSS;
-    console.log(">> fill image: ", item);
 
     this.imageUrl = item.src;
     /**
@@ -308,11 +305,6 @@ export default class SingleImage {
           width: `${dragWidth}px`,
           height: `${dragHeight}px`,
           transform: `translate(${event.deltaRect.left}px, ${event.deltaRect.top}px)`,
-        });
-
-        this.onStyleChange({
-          width: dragWidth,
-          height: dragHeight,
         });
 
         Object.assign(event.target.dataset, { x, y });

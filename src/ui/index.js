@@ -4,6 +4,9 @@ import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
 
 // import interact from 'interactjs';
+
+import { STATUS } from "../constant";
+
 import UploadIcon from "../icon/upload.svg";
 import LinkIcon from "../icon/link-add.svg";
 
@@ -36,9 +39,6 @@ import { getExternalLinkPopoverOptions } from "./helper";
  * @property {String} height
  */
 
-const resizeScript =
-  "https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js";
-
 /**
  * Class for working with UI:
  *  - rendering base structure
@@ -51,12 +51,11 @@ export default class UI {
    * @param {ImageConfig} config - user config
    * @param {function} onSelectFile - callback for clicks on Select file button
    */
-  constructor({ api, config, data, onSelectFile, onStyleChange, reRender }) {
+  constructor({ api, config, data, onSelectFile, reRender }) {
     this.api = api;
     this.i18n = config.i18n || "en";
     this.config = config;
     this.onSelectFile = onSelectFile;
-    this.onStyleChange = onStyleChange;
     this.reRender = reRender;
 
     this.imageUrl = "";
@@ -88,7 +87,7 @@ export default class UI {
       imageContainer: make("div", [this.CSS.imageContainer]),
       fileButton: undefined,
       imageWrapper: undefined,
-      imagePreloader: make("div", this.CSS.imagePreloader),
+      hint: this._drawUploadStatusBox(),
     };
 
     /**
@@ -105,28 +104,29 @@ export default class UI {
      *    <select-file-button />
      *  </wrapper>
      */
-    this.nodes.imageContainer.appendChild(this.nodes.imagePreloader);
     this.nodes.wrapper.appendChild(this.nodes.imageContainer);
     //
     this.nodes.fileButton = this.drawUploadButton(this._data);
     this.nodes.wrapper.appendChild(this.nodes.fileButton);
 
+    this.nodes.wrapper.appendChild(this.nodes.hint);
     //
     this.singleImage = new SingleImage({
       api,
       data,
       config,
       onSelectFile,
-      onStyleChange,
     });
     this.jiugongeImages = new JiugonggeImages({
       api,
       data,
+      onSelectFile,
       reRender: reRender,
     });
     this.galleryImages = new GalleryImages({
       api,
       data,
+      onSelectFile,
       reRender: reRender,
     });
   }
@@ -155,13 +155,48 @@ export default class UI {
       mainUploadButtonDesc: "image-tool__main_upload_box_button_desc",
 
       imageContainer: "image-tool__image",
-      imagePreloader: "image-tool__image-preloader",
       imageWrapper: "image-tool__image-wrapper",
+
+      // hint
+      hint: "image-tool__hint-box",
 
       settingsWrapper: "cdx-settings-panel",
       settingsButton: this.api.styles.settingsButton,
       settingsButtonActive: this.api.styles.settingsButtonActive,
     };
+  }
+
+  /**
+   * 正在上传: xxx.jpg
+   *
+   * @memberof UI
+   */
+  _drawUploadStatusBox() {
+    const WrapperEl = make("div", this.CSS.hint, {
+      innerHTML: "正在上传",
+    });
+    //
+    return WrapperEl;
+  }
+
+  /**
+   * TODO:
+   *
+   * @memberof UI
+   */
+  triggerHint(show, status = "default") {
+    if (
+      this._data.mode === MODE.JIUGONGGE ||
+      this._data.mode === MODE.GALLERY
+    ) {
+      this.nodes.hint.style.top = "8px";
+    } else {
+      this.nodes.hint.style.top = "-20px";
+    }
+
+    show
+      ? (this.nodes.hint.style.display = "flex")
+      : (this.nodes.hint.style.display = "none");
   }
 
   /**
@@ -193,10 +228,14 @@ export default class UI {
 
     switch (toolData.mode) {
       case MODE.JIUGONGGE: {
-        return this.jiugongeImages.render(toolData);
+        const newEl = this.jiugongeImages.render(toolData);
+        newEl.appendChild(this.nodes.hint);
+        return newEl;
       }
       case MODE.GALLERY: {
-        return this.galleryImages.render(toolData);
+        const newEl = this.galleryImages.render(toolData);
+        newEl.appendChild(this.nodes.hint);
+        return newEl;
       }
       default: {
         return this.singleImage.render(toolData);
@@ -213,18 +252,6 @@ export default class UI {
     this._data = toolData;
 
     this.toggleStatus(UI.status.EMPTY);
-    // if (!toolData.file || Object.keys(toolData.file).length === 0) {
-    //   console.log("b2");
-    //   this.toggleStatus(UI.status.EMPTY);
-    // } else {
-    //   console.log("b3");
-    //   // this.toggleStatus(UI.status.UPLOADING);
-    //   this.toggleStatus(UI.status.FILLED);
-    //   this.fillImage(toolData.file.url);
-    // }
-
-    // this.toggleStatus(UI.status.FILLED);
-    // this.fillImage(toolData.file.url);
 
     return this.nodes.wrapper;
   }
@@ -289,7 +316,7 @@ export default class UI {
       innerHTML: "本地上传",
     });
     const UploadDescEl = make("div", [this.CSS.mainUploadButtonDesc], {
-      innerHTML: "jpg, png, gif 等常见格式, 最大 500 KB",
+      innerHTML: "jpg, png, gif 等常见格式, 单张最大 500 KB",
     });
 
     UploadInfoEl.appendChild(UploadTitleEl);

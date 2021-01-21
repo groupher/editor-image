@@ -30,6 +30,7 @@
   --front-color: #388ae5;
   --border-color: #e8e8eb;
 
+  position: relative;
   margin-top: 20px;
   margin-bottom: 20px;
 
@@ -261,34 +262,6 @@
       display: block;
       z-index: 5;
     }
-
-    &-preloader {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-size: cover;
-      margin: auto;
-      position: relative;
-      background-color: var(--bg-color);
-      background-position: center center;
-
-      &::after {
-        content: "";
-        position: absolute;
-        z-index: 3;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        border: 2px solid var(--bg-color);
-        border-top-color: var(--front-color);
-        left: 50%;
-        top: 50%;
-        margin-top: -30px;
-        margin-left: -30px;
-        animation: image-preloader-spin 2s infinite linear;
-        box-sizing: border-box;
-      }
-    }
   }
 
   &__caption {
@@ -317,54 +290,46 @@
     }
   }
 
-  &--empty {
-    ^&__image {
-      display: none;
+  &__hint-box {
+    position: absolute;
+    top: -20px;
+    left: calc(50% - 50px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+    max-width: 300px;
+    height: 20px;
+    background: #69737d;
+    color: white;
+    border-radius: 3px;
+    font-size: 11px;
+    opacity: 0.8;
+
+    &::after {
+      content: "";
+      position: absolute;
+      z-index: 3;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid #69737d;
+      border-top-color: white;
+      left: 50%;
+      top: 50%;
+      margin-top: -5px;
+      margin-left: -40px;
+      animation: loading-spin 0.5s infinite linear;
+      box-sizing: border-box;
+      opacity: 0.8;
     }
   }
-
-  &--empty,
-  &--loading {
-    ^&__caption {
-      display: none;
-    }
-  }
-
-  &--filled {
-    .cdx-button {
-      display: none;
-    }
-
-    ^&__image {
-      &-preloader {
-        display: none;
-      }
-    }
-  }
-
-  &--loading {
-    ^&__image {
-      min-height: 200px;
-      display: flex;
-      border: 1px solid var(--border-color);
-      background-color: #fff;
-
-      &-picture {
-        display: none;
-      }
-    }
-
-    .cdx-button {
-      display: none;
-    }
-  }
-
-  /**
-   * Tunes
-   * ----------------
-   */
 }
 
+/**
+ * Tunes
+ * ----------------
+ */
 .cdx-settings-panel {
   display: flex;
   padding-bottom: 3px;
@@ -376,7 +341,7 @@
   opacity: 0.8;
 }
 
-@keyframes image-preloader-spin {
+@keyframes loading-spin {
   0% {
     transform: rotate(0deg);
   }

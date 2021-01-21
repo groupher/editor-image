@@ -44,43 +44,29 @@ export default class Uploader {
       this.config.uploader &&
       typeof this.config.uploader.uploadByFile === "function"
     ) {
-      upload = ajax.selectFiles().then((files) => {
-        preparePreview(files[0]);
-
-        const customUpload = this.config.uploader.uploadByFile(files[0]);
-
-        if (!isPromise(customUpload)) {
-          console.warn(
-            "Custom uploader method uploadByFile should return a Promise"
-          );
-        }
-
-        return customUpload;
-      });
-
-      // default uploading
-    } else {
-      upload = ajax
-        .transport({
-          url: this.config.endpoints.byFile,
-          data: this.config.additionalRequestData,
-          accept: this.config.types,
-          headers: this.config.additionalRequestHeaders,
-          beforeSend: (files) => {
+      console.log("# custom uploading");
+      return new Promise((resolve) => {
+        // see @link: https://github.com/codex-team/ajax/blob/ecb65a9279aeffa0b578c57270aca1514138b70f/src/utils.js#L133-L139
+        ajax
+          .selectFiles({ multiple: true, accept: "image/*" })
+          .then((files) => {
+            console.log("select files: ", files);
             preparePreview(files[0]);
-          },
-          fieldName: this.config.field,
-        })
-        .then((response) => response.body);
-    }
 
-    upload
-      .then((response) => {
-        this.onUpload(response);
-      })
-      .catch((error) => {
-        this.onError(error);
+            const customUpload = this.config.uploader.uploadByFile(files);
+
+            if (!isPromise(customUpload)) {
+              console.warn(
+                "Custom uploader method uploadByFile should return a Promise"
+              );
+            }
+
+            customUpload.then((files) => {
+              return resolve(files);
+            });
+          });
       });
+    }
   }
 
   /**

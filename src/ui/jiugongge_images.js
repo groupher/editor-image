@@ -31,9 +31,10 @@ export default class JiugonggeImages {
   /**
    * @param {object} api - Editor.js API
    */
-  constructor({ api, data, reRender }) {
+  constructor({ api, data, onSelectFile, reRender }) {
     this.api = api;
     this.reRender = reRender;
+    this.onSelectFile = onSelectFile;
 
     this.nodes = {
       wrapper: null,
@@ -177,23 +178,6 @@ export default class JiugonggeImages {
     }
 
     return this.nodes.wrapper;
-  }
-
-  /**
-   * add picture
-   *
-   * @memberof Jiugongge
-   * @private
-   */
-  _addLocalPicture() {
-    const index = this._data.items.length;
-
-    this._data.items.push({
-      index: index,
-      src: TMP_PIC[index],
-    });
-
-    this.reRender(this._data);
   }
 
   /**
@@ -353,8 +337,7 @@ export default class JiugonggeImages {
     });
 
     UploadIconEl.addEventListener("click", () => {
-      // TODO: select local file
-      this._addLocalPicture();
+      this.onSelectFile();
     });
 
     const HintEl = make("div", this.CSS.hint);
