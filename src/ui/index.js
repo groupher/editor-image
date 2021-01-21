@@ -88,7 +88,7 @@ export default class UI {
       imageContainer: make("div", [this.CSS.imageContainer]),
       fileButton: undefined,
       imageWrapper: undefined,
-      hint: this._drawUploadStatusBox(),
+      hint: make("div", this.CSS.hint),
     };
 
     /**
@@ -171,28 +171,15 @@ export default class UI {
   }
 
   /**
-   * 正在上传: xxx.jpg
+   * trigger hint for uploading status (uploading or upload error)
    *
+   * @param {boolean} visible
+   * @param {string} [status="normal" | "error"]
    * @memberof UI
    */
-  _drawUploadStatusBox() {
-    const WrapperEl = make("div", this.CSS.hint, {
-      innerHTML: "正在上传",
-    });
-    //
-    return WrapperEl;
-  }
-
-  /**
-   * TODO:
-   *
-   * @memberof UI
-   */
-  triggerHint(show, status = "normal") {
-    if (
-      this._data.mode === MODE.JIUGONGGE ||
-      this._data.mode === MODE.GALLERY
-    ) {
+  triggerHint(visible, status = "normal") {
+    const { mode } = this._data;
+    if (mode === MODE.JIUGONGGE || mode === MODE.GALLERY) {
       this.nodes.hint.style.top = "8px";
     } else {
       this.nodes.hint.style.top = "-20px";
@@ -208,24 +195,9 @@ export default class UI {
       this.nodes.hint.innerHTML = `${NoticeMarkIcon} 上传失败`;
     }
 
-    show
+    visible
       ? (this.nodes.hint.style.display = "flex")
       : (this.nodes.hint.style.display = "none");
-  }
-
-  /**
-   * UI statuses:
-   * - empty
-   * - uploading
-   * - filled
-   * @return {{EMPTY: string, UPLOADING: string, FILLED: string}}
-   */
-  static get status() {
-    return {
-      EMPTY: "empty",
-      UPLOADING: "loading",
-      FILLED: "filled",
-    };
   }
 
   /**
@@ -264,8 +236,6 @@ export default class UI {
    */
   renderUploadOptions(toolData) {
     this._data = toolData;
-
-    this.toggleStatus(UI.status.EMPTY);
 
     return this.nodes.wrapper;
   }
@@ -369,33 +339,6 @@ export default class UI {
     UploadButtonEl.addEventListener("click", () => this.onSelectFile());
 
     return WrapperEl;
-  }
-
-  /**
-   * Changes UI status
-   * @param {string} status - see {@link UI.status} constants
-   */
-  toggleStatus(status) {
-    for (const statusType in UI.status) {
-      if (UI.status.hasOwnProperty(statusType)) {
-        this.nodes.wrapper.classList.toggle(
-          `${this.CSS.wrapper}--${UI.status[statusType]}`,
-          status === UI.status[statusType]
-        );
-      }
-    }
-  }
-
-  /**
-   * Apply visual representation of activated tune
-   * @param {string} tuneName - one of available tunes {@link Tunes.tunes}
-   * @param {boolean} status - true for enable, false for disable
-   */
-  applyTune(tuneName, status) {
-    this.nodes.wrapper.classList.toggle(
-      `${this.CSS.wrapper}--${tuneName}`,
-      status
-    );
   }
 
   /**

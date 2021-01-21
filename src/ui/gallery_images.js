@@ -53,11 +53,6 @@ export default class GalleryImages {
    */
   get CSS() {
     return {
-      // baseClass: this.api.styles.block,
-      // loading: this.api.styles.loader,
-      // input: this.api.styles.input,
-      // button: this.api.styles.button,
-
       /**
        * gallery's classes
        */
@@ -149,7 +144,8 @@ export default class GalleryImages {
   }
 
   /**
-   * draw mini map image selector
+   * draw mini map images for preview
+   * mini images can be re-org by dray-drop
    *
    * @memberof Gallery
    * @private
@@ -223,16 +219,6 @@ export default class GalleryImages {
   }
 
   /**
-   * add picture
-   *
-   * @memberof Gallery
-   * @private
-   */
-  _addLocalPicture() {
-    this.onSelectFile();
-  }
-
-  /**
    * delete picture from current items
    *
    * @param {Number} index - index in _data.items
@@ -244,9 +230,13 @@ export default class GalleryImages {
     this.reRender(this._data);
   }
 
-  /* draw inline toolbar
-   *
+  /**
+   * draw inline toolbar for each image
+   * @param {number} index
+   * @param {desc} desc
+   * @return {HTMLElement}
    * @memberof Gallery
+   * @private
    */
   _drawInlineToolbar(index, desc) {
     const WrapperEl = make("div", this.CSS.toolbar, {
@@ -274,7 +264,7 @@ export default class GalleryImages {
 
     DeleteEl.addEventListener("click", (e) => this._deletePicture(index));
 
-    tippy(DescIconEl, this._drawDescInputer(index));
+    tippy(DescIconEl, this._drawDescOptions(index));
     tippy(UploadEl, this._drawUploadOptions(index));
 
     this.api.tooltip.onHover(DescIconEl, "添加描述", { delay: 1500 });
@@ -297,10 +287,11 @@ export default class GalleryImages {
 
   /**
    * draw picture desc input
-   *
+   * @param {number} index
+   * @return tippy options
    * @memberof Gallery
    */
-  _drawDescInputer(index) {
+  _drawDescOptions(index) {
     const WrapperEl = make("div", this.CSS.descPopover);
     const TextareaEl = make("textarea", "", {
       placeholder: "添加描述..",
@@ -336,7 +327,7 @@ export default class GalleryImages {
 
   /**
    * draw picture upload options input
-   *
+   * @return tippy options
    * @memberof Gallery
    */
   _drawUploadOptions() {
@@ -379,7 +370,7 @@ export default class GalleryImages {
 
   /**
    * draw adder block
-   *
+   * @return {HTMLElement}
    * @memberof Gallery
    */
   _drawAdder() {

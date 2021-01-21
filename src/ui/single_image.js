@@ -352,16 +352,4 @@ export default class SingleImage {
       }
     }
   }
-
-  /**
-   * Apply visual representation of activated tune
-   * @param {string} tuneName - one of available tunes {@link Tunes.tunes}
-   * @param {boolean} status - true for enable, false for disable
-   */
-  applyTune(tuneName, status) {
-    this.nodes.wrapper.classList.toggle(
-      `${this.CSS.wrapper}--${tuneName}`,
-      status
-    );
-  }
 }

@@ -55,11 +55,6 @@ export default class JiugonggeImages {
    */
   get CSS() {
     return {
-      // baseClass: this.api.styles.block,
-      // loading: this.api.styles.loader,
-      // input: this.api.styles.input,
-      // button: this.api.styles.button,
-
       /**
        * jiugongge's classes
        */
@@ -222,7 +217,7 @@ export default class JiugonggeImages {
 
     DeleteEl.addEventListener("click", (e) => this._deletePicture(index));
 
-    tippy(DescIconEl, this._drawDescInputer(index));
+    tippy(DescIconEl, this._drawDescOptions(index));
     tippy(UploadEl, this._drawUploadOptions(index));
 
     this.api.tooltip.onHover(DescIconEl, "添加描述", { delay: 1500 });
@@ -245,10 +240,11 @@ export default class JiugonggeImages {
 
   /**
    * draw picture desc input
-   *
-   * @memberof Jiugongge
+   * @param {number} index
+   * @return tippy options
+   * @memberof Gallery
    */
-  _drawDescInputer(index) {
+  _drawDescOptions(index) {
     const WrapperEl = make("div", this.CSS.descPopover);
     const TextareaEl = make("textarea", "", {
       placeholder: "添加描述..",
@@ -284,8 +280,8 @@ export default class JiugonggeImages {
 
   /**
    * draw picture upload options input
-   *
-   * @memberof Jiugongge
+   * @return tippy options
+   * @memberof Gallery
    */
   _drawUploadOptions() {
     const WrapperEl = make("div", this.CSS.uploadPopover);
@@ -327,8 +323,8 @@ export default class JiugonggeImages {
 
   /**
    * draw adder block
-   *
-   * @memberof Jiugongge
+   * @return {HTMLElement}
+   * @memberof Gallery
    */
   _drawAdder() {
     const AdderEl = make("div", this.CSS.adderBlock);
