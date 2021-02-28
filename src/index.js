@@ -360,7 +360,7 @@ export default class ImageTool {
    * @return {TableData}
    */
   save() {
-    console.log("# image saving: ", this.ui.data);
+    // console.log("# image saving: ", this.ui.data);
     return this.ui.data;
   }
 

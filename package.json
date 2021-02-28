@@ -42,7 +42,7 @@
     "webpack-cli": "^3.2.3"
   },
   "dependencies": {
-    "@groupher/editor-utils": "0.1.87",
+    "@groupher/editor-utils": "0.2.26",
     "glightbox": "^3.0.7",
     "ramda": "^0.27.1",
     "tippy.js": "^6.2.7"

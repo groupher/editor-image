@@ -1,4 +1,4 @@
-import { loadJS, loadCSS, make, clazz } from "@groupher/editor-utils";
+import { make, clazz } from "@groupher/editor-utils";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
