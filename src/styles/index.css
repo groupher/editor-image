@@ -271,11 +271,9 @@
     text-align: center;
     color: grey;
     box-shadow: none;
-    margin-left: 4%;
 
     &[contentEditable="true"][data-placeholder]::before {
       position: absolute;
-      margin-left: -60px;
       content: attr(data-placeholder);
       color: #707684;
       font-weight: normal;
