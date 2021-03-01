@@ -201,23 +201,23 @@ export default class SingleImage {
      * Compose tag with defined attributes
      * @type {Element}
      */
-    this.nodes.imageWrapper = make("DIV", CSS.imageWrapper);
-    this.nodes.imageInfoLabel = make("DIV", CSS.imageInfoLabel);
-    this.nodes.imageTopLeftDragger = make("DIV", CSS.imageTopLeftDragger, {
+    this.nodes.imageWrapper = make("div", CSS.imageWrapper);
+    this.nodes.imageInfoLabel = make("div", CSS.imageInfoLabel);
+    this.nodes.imageTopLeftDragger = make("div", CSS.imageTopLeftDragger, {
       "data-skip-plus-button": true,
     });
-    this.nodes.imageTopRightDragger = make("DIV", CSS.imageTopRightDragger, {
+    this.nodes.imageTopRightDragger = make("div", CSS.imageTopRightDragger, {
       "data-skip-plus-button": true,
     });
     this.nodes.imageBottomLeftDragger = make(
-      "DIV",
+      "div",
       CSS.imageBottomLeftDragger,
       {
         "data-skip-plus-button": true,
       }
     );
     this.nodes.imageBottomRightDragger = make(
-      "DIV",
+      "div",
       CSS.imageBottomRightDragger,
       {
         "data-skip-plus-button": true,
