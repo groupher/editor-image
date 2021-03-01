@@ -51,6 +51,7 @@ export default class SingleImage {
 
     this.nodes = {};
     this.initNodes(data);
+    this._data = data;
 
     /**
      * image ratio, to keep image shape when resize
@@ -71,7 +72,7 @@ export default class SingleImage {
   initNodes(data) {
     let caption = "";
     if (data.items[0]) {
-      caption = data.items[0].desc || "";
+      caption = data.items[0].caption || "";
     }
 
     this.nodes = {
@@ -91,6 +92,12 @@ export default class SingleImage {
         innerHTML: caption,
       }),
     };
+
+    this.nodes.caption.addEventListener("input", (e) => {
+      console.log("input", e);
+      data.items[0].caption = e.target.innerHTML;
+    });
+
     /**
      * Create base structure
      *  <wrapper>
@@ -196,14 +203,31 @@ export default class SingleImage {
      */
     this.nodes.imageWrapper = make("DIV", CSS.imageWrapper);
     this.nodes.imageInfoLabel = make("DIV", CSS.imageInfoLabel);
-    this.nodes.imageTopLeftDragger = make("DIV", CSS.imageTopLeftDragger);
-    this.nodes.imageTopRightDragger = make("DIV", CSS.imageTopRightDragger);
-    this.nodes.imageBottomLeftDragger = make("DIV", CSS.imageBottomLeftDragger);
+    this.nodes.imageTopLeftDragger = make("DIV", CSS.imageTopLeftDragger, {
+      "data-skip-plus-button": true,
+    });
+    this.nodes.imageTopRightDragger = make("DIV", CSS.imageTopRightDragger, {
+      "data-skip-plus-button": true,
+    });
+    this.nodes.imageBottomLeftDragger = make(
+      "DIV",
+      CSS.imageBottomLeftDragger,
+      {
+        "data-skip-plus-button": true,
+      }
+    );
     this.nodes.imageBottomRightDragger = make(
       "DIV",
-      CSS.imageBottomRightDragger
+      CSS.imageBottomRightDragger,
+      {
+        "data-skip-plus-button": true,
+      }
     );
-    this.nodes.imageEl = make("img", CSS.imageEl, { src: item.src });
+
+    this.nodes.imageEl = make("img", CSS.imageEl, {
+      src: item.src,
+      "data-skip-plus-button": true,
+    });
 
     /**
      * Add load event listener
@@ -221,12 +245,19 @@ export default class SingleImage {
     this.nodes.imageWrapper.appendChild(this.nodes.imageEl);
     this.nodes.imageContainer.appendChild(this.nodes.imageWrapper);
 
+    setTimeout(() => {
+      if (item.width !== "" && item.height !== "") {
+        this.nodes.imageWrapper.style.width = item.width;
+        this.nodes.imageWrapper.style.height = item.height;
+      }
+    });
+
     this.nodes.imageEl.addEventListener("click", () => {
       this.previewer.setElements([
         {
           href: item.src,
           type: "image",
-          description: item.desc,
+          description: item.caption,
         },
       ]);
       this.previewer.open();
@@ -285,15 +316,16 @@ export default class SingleImage {
         let { x, y } = event.target.dataset;
         const maxWidth = event.target.parentElement.parentElement.clientWidth;
 
-        x = parseFloat(x) || 0;
-        y = parseFloat(y) || 0;
+        x = parseInt(x) || 0;
+        y = parseInt(y) || 0;
 
         // TODO:  先要看是竖的还是横的
         // const radio = event.target.height / event.target.width
 
-        const dragWidth =
-          event.rect.width <= maxWidth ? event.rect.width : maxWidth;
-        const dragHeight = dragWidth * this.imageRatio;
+        const dragWidth = parseInt(
+          event.rect.width <= maxWidth ? event.rect.width : maxWidth
+        );
+        const dragHeight = parseInt(dragWidth * this.imageRatio);
 
         this.nodes.imageInfoLabel.innerHTML = this.labelInfoHTML(
           dragHeight,
@@ -306,6 +338,9 @@ export default class SingleImage {
           height: `${dragHeight}px`,
           transform: `translate(${event.deltaRect.left}px, ${event.deltaRect.top}px)`,
         });
+
+        this._data.width = `${dragWidth}px`;
+        this._data.height = `${dragHeight}px`;
 
         Object.assign(event.target.dataset, { x, y });
       });

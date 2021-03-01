@@ -288,7 +288,7 @@ export default class UI {
    * @return {Element}
    */
   drawUploadButton(data) {
-    const WrapperEl = make("div", [this.CSS.mainUploadBox, this.CSS.button]);
+    const wrapperEl = make("div", [this.CSS.mainUploadBox, this.CSS.button]);
     const UploadDesIcon = make("div", this.CSS.mainUploadBoxIcon, {
       innerHTML: UploadIcon,
     });
@@ -333,12 +333,12 @@ export default class UI {
       getExternalLinkPopoverOptions(data, 0, (data) => this.reRender(data))
     );
 
-    WrapperEl.appendChild(UploadButtonEl);
-    WrapperEl.appendChild(LinkButtonEl);
+    wrapperEl.appendChild(UploadButtonEl);
+    wrapperEl.appendChild(LinkButtonEl);
 
     UploadButtonEl.addEventListener("click", () => this.onSelectFile());
 
-    return WrapperEl;
+    return wrapperEl;
   }
 
   /**

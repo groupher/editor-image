@@ -94,59 +94,60 @@ export default class JiugonggeImages {
 
     for (let i = 0; i < data.items.length; i++) {
       const item = data.items[i];
-      const BlockEl = make("div", this.CSS.block);
+      const blockEl = make("div", this.CSS.block);
 
-      BlockEl.addEventListener("click", () => {
+      blockEl.addEventListener("click", () => {
         const s1 = this._data.items.slice(0, i);
         const s2 = this._data.items.slice(i, data.items.length);
         // 确保当前打开的在第一张显示
         const sortedItems = [...s2, ...s1];
-        const imageElements = sortedItems.map((item) => ({
+        const imageEls = sortedItems.map((item) => ({
           href: item.src,
           type: "image",
-          description: item.desc || "",
+          description: item.caption || "",
         }));
 
-        this.previewer.setElements(imageElements);
+        this.previewer.setElements(imageEls);
         this.previewer.open();
       });
 
-      const ImageEl = make("img", this.CSS.image, {
+      const imageEl = make("img", this.CSS.image, {
         src: item.src,
         alt: "image",
         "data-image-index": i,
+        "data-skip-plus-button": true,
         draggable: "true",
       });
 
-      ImageEl.addEventListener("dragstart", (e) => {
+      imageEl.addEventListener("dragstart", (e) => {
         clazz.add(e.target, this.CSS.imageDragging);
-        this.draggingImage = ImageEl;
+        this.draggingImage = imageEl;
       });
 
-      ImageEl.addEventListener("dragenter", (e) => {
-        if (this.draggingImage !== ImageEl) {
+      imageEl.addEventListener("dragenter", (e) => {
+        if (this.draggingImage !== imageEl) {
           clazz.add(e.target, this.CSS.imageDrop);
         }
       });
 
       // if the image is dragging to non-draggable area
-      ImageEl.addEventListener("dragend", (e) => {
+      imageEl.addEventListener("dragend", (e) => {
         clazz.remove(e.target, this.CSS.imageDragging);
       });
 
-      ImageEl.addEventListener("dragover", (e) => {
-        if (this.draggingImage !== ImageEl) {
+      imageEl.addEventListener("dragover", (e) => {
+        if (this.draggingImage !== imageEl) {
           clazz.add(e.target, this.CSS.imageDrop);
         }
       });
 
-      ImageEl.addEventListener("dragleave", (e) => {
-        if (this.draggingImage !== ImageEl) {
+      imageEl.addEventListener("dragleave", (e) => {
+        if (this.draggingImage !== imageEl) {
           clazz.remove(e.target, this.CSS.imageDrop);
         }
       });
 
-      ImageEl.addEventListener("drop", (e) => {
+      imageEl.addEventListener("drop", (e) => {
         clazz.remove(this.draggingImage, this.CSS.imageDragging);
         clazz.remove(e.target, this.CSS.imageDrop);
         const fromIndex = parseInt(this.draggingImage.dataset.imageIndex);
@@ -158,13 +159,13 @@ export default class JiugonggeImages {
         this.reRender(this._data);
       });
 
-      BlockEl.appendChild(ImageEl);
-      BlockEl.appendChild(this._drawInlineToolbar(i, item.desc));
+      blockEl.appendChild(imageEl);
+      blockEl.appendChild(this._drawInlineToolbar(i, item.caption));
 
       // hide all popover when leave
-      // BlockEl.addEventListener("mouseleave", () => hideAll());
+      // blockEl.addEventListener("mouseleave", () => hideAll());
 
-      this.nodes.wrapper.appendChild(BlockEl);
+      this.nodes.wrapper.appendChild(blockEl);
     }
 
     // add adder if needed
@@ -192,22 +193,22 @@ export default class JiugonggeImages {
    * @memberof Jiugongge
    */
   _drawInlineToolbar(index, desc) {
-    const WrapperEl = make("div", this.CSS.toolbar, {
+    const wrapperEl = make("div", this.CSS.toolbar, {
       "data-toolbar": index,
     });
 
-    const DescEl = make("div", this.CSS.toolbarDesc, {
+    const descEl = make("div", this.CSS.toolbarDesc, {
       innerHTML: desc,
     });
 
     // 添加说明，更换图片，删除，下载
-    const DescIconEl = make("div", this.CSS.toolbarIcon, {
+    const descIconEl = make("div", this.CSS.toolbarIcon, {
       innerHTML: PenIcon,
     });
-    const UploadEl = make("div", this.CSS.toolbarIcon, {
+    const uploadEl = make("div", this.CSS.toolbarIcon, {
       innerHTML: UploadIcon,
     });
-    const DeleteEl = make(
+    const deleteEl = make(
       "div",
       [this.CSS.toolbarIcon, this.CSS.toolbarSmallIcon],
       {
@@ -215,27 +216,27 @@ export default class JiugonggeImages {
       }
     );
 
-    DeleteEl.addEventListener("click", (e) => this._deletePicture(index));
+    deleteEl.addEventListener("click", (e) => this._deletePicture(index));
 
-    tippy(DescIconEl, this._drawDescOptions(index));
-    tippy(UploadEl, this._drawUploadOptions(index));
+    tippy(descIconEl, this._drawDescOptions(index));
+    tippy(uploadEl, this._drawUploadOptions(index));
 
-    this.api.tooltip.onHover(DescIconEl, "添加描述", { delay: 1500 });
-    this.api.tooltip.onHover(UploadEl, "重新上传", { delay: 500 });
-    this.api.tooltip.onHover(DeleteEl, "删除", { delay: 500 });
+    this.api.tooltip.onHover(descIconEl, "添加描述", { delay: 1500 });
+    this.api.tooltip.onHover(uploadEl, "重新上传", { delay: 500 });
+    this.api.tooltip.onHover(deleteEl, "删除", { delay: 500 });
 
     if (!!desc) {
-      WrapperEl.appendChild(DescEl);
+      wrapperEl.appendChild(descEl);
     }
 
-    WrapperEl.appendChild(DescIconEl);
-    WrapperEl.appendChild(UploadEl);
-    WrapperEl.appendChild(DeleteEl);
+    wrapperEl.appendChild(descIconEl);
+    wrapperEl.appendChild(uploadEl);
+    wrapperEl.appendChild(deleteEl);
 
     // avoid trigger previewer the whole picture
-    WrapperEl.addEventListener("click", (e) => e.stopPropagation());
+    wrapperEl.addEventListener("click", (e) => e.stopPropagation());
 
-    return WrapperEl;
+    return wrapperEl;
   }
 
   /**
@@ -245,27 +246,27 @@ export default class JiugonggeImages {
    * @memberof Gallery
    */
   _drawDescOptions(index) {
-    const WrapperEl = make("div", this.CSS.descPopover);
-    const TextareaEl = make("textarea", "", {
+    const wrapperEl = make("div", this.CSS.descPopover);
+    const textareaEl = make("textarea", "", {
       placeholder: "添加描述..",
-      value: this._data.items[index].desc || "",
+      value: this._data.items[index].caption || "",
     });
 
-    TextareaEl.addEventListener("input", (e) => {
-      this._data.items[index].desc = e.target.value;
+    textareaEl.addEventListener("input", (e) => {
+      this._data.items[index].caption = e.target.value;
     });
 
-    TextareaEl.addEventListener("blur", (e) => {
+    textareaEl.addEventListener("blur", (e) => {
       const toolbarEl = this.nodes.wrapper.querySelector(
         `[data-toolbar='${index}']`
       );
       toolbarEl.replaceWith(this._drawInlineToolbar(index, e.target.value));
     });
 
-    WrapperEl.appendChild(TextareaEl);
+    wrapperEl.appendChild(textareaEl);
 
     return {
-      content: WrapperEl,
+      content: wrapperEl,
       theme: "light",
       // delay: 200,
       trigger: "click",
@@ -273,7 +274,7 @@ export default class JiugonggeImages {
       // allowing you to hover over and click inside them.
       interactive: true,
       onShow() {
-        setTimeout(() => TextareaEl.focus());
+        setTimeout(() => textareaEl.focus());
       },
     };
   }
@@ -284,34 +285,34 @@ export default class JiugonggeImages {
    * @memberof Gallery
    */
   _drawUploadOptions() {
-    const WrapperEl = make("div", this.CSS.uploadPopover);
-    const LocalUploadEl = make("div", this.CSS.uploadPopoverBtn, {
+    const wrapperEl = make("div", this.CSS.uploadPopover);
+    const localUploadEl = make("div", this.CSS.uploadPopoverBtn, {
       innerHTML: "本地上传",
     });
 
-    const LinkUploadEl = make("div", this.CSS.uploadPopoverBtn, {
+    const linkUploadEl = make("div", this.CSS.uploadPopoverBtn, {
       innerHTML: "图片链接",
     });
 
-    const LinkUploadTextareaEl = make("textarea", this.CSS.uploadPopoverInput, {
+    const linkUploadTextareaEl = make("textarea", this.CSS.uploadPopoverInput, {
       placeholder: "链接地址",
     });
 
-    LinkUploadEl.addEventListener("click", (e) => {
-      LinkUploadTextareaEl.style.display = "block";
-      LinkUploadTextareaEl.focus();
+    linkUploadEl.addEventListener("click", (e) => {
+      linkUploadTextareaEl.style.display = "block";
+      linkUploadTextareaEl.focus();
     });
 
-    LinkUploadTextareaEl.addEventListener("blur", (e) => {
-      LinkUploadTextareaEl.style.display = "none";
+    linkUploadTextareaEl.addEventListener("blur", (e) => {
+      linkUploadTextareaEl.style.display = "none";
     });
 
-    WrapperEl.appendChild(LocalUploadEl);
-    WrapperEl.appendChild(LinkUploadEl);
-    WrapperEl.appendChild(LinkUploadTextareaEl);
+    wrapperEl.appendChild(localUploadEl);
+    wrapperEl.appendChild(linkUploadEl);
+    wrapperEl.appendChild(linkUploadTextareaEl);
 
     return {
-      content: WrapperEl,
+      content: wrapperEl,
       theme: "light",
       // delay: 200,
       trigger: "click",
@@ -327,41 +328,41 @@ export default class JiugonggeImages {
    * @memberof Gallery
    */
   _drawAdder() {
-    const AdderEl = make("div", this.CSS.adderBlock);
-    const UploadIconEl = make("div", this.CSS.upload, {
+    const adderEl = make("div", this.CSS.adderBlock);
+    const uploadIconEl = make("div", this.CSS.upload, {
       innerHTML: UploadIcon,
     });
 
-    UploadIconEl.addEventListener("click", () => {
+    uploadIconEl.addEventListener("click", () => {
       this.onSelectFile();
     });
 
-    const HintEl = make("div", this.CSS.hint);
+    const hintEl = make("div", this.CSS.hint);
 
-    const HintIconEl = make("div", this.CSS.hintIcon, {
+    const hintIconEl = make("div", this.CSS.hintIcon, {
       innerHTML: LinkAddIcon,
     });
 
-    const HintTextEl = make("div", this.CSS.hintText, {
+    const hintTextEl = make("div", this.CSS.hintText, {
       innerHTML: "外部链接",
     });
 
     tippy(
-      HintTextEl,
+      hintTextEl,
       getExternalLinkPopoverOptions(this._data, -1, (data) =>
         this.reRender(data)
       )
     );
 
-    HintEl.appendChild(HintIconEl);
-    HintEl.appendChild(HintTextEl);
+    hintEl.appendChild(hintIconEl);
+    hintEl.appendChild(hintTextEl);
 
-    AdderEl.appendChild(UploadIconEl);
-    AdderEl.appendChild(HintEl);
+    adderEl.appendChild(uploadIconEl);
+    adderEl.appendChild(hintEl);
 
     // hide all popover when leave
-    AdderEl.addEventListener("mouseleave", () => hideAll());
+    adderEl.addEventListener("mouseleave", () => hideAll());
 
-    return AdderEl;
+    return adderEl;
   }
 }

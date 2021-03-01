@@ -40,26 +40,26 @@ const CSS = {
  * @returns
  */
 export const getDescInputPopoverOptions = (index, data, node, blurCallback) => {
-  const WrapperEl = make("div", CSS.descPopover);
-  const TextareaEl = make("textarea", "", {
+  const wrapperEl = make("div", CSS.descPopover);
+  const textareaEl = make("textarea", "", {
     placeholder: "添加描述..",
-    value: data.items[index].desc || "",
+    value: data.items[index].caption || "",
   });
 
-  TextareaEl.addEventListener("input", (e) => {
-    data.items[index].desc = e.target.value;
+  textareaEl.addEventListener("input", (e) => {
+    data.items[index].caption = e.target.value;
   });
 
-  TextareaEl.addEventListener("blur", (e) => {
+  textareaEl.addEventListener("blur", (e) => {
     const toolbarEl = node.querySelector(`[data-toolbar='${index}']`);
     // toolbarEl.replaceWith(this._drawInlineToolbar(index, e.target.value));
     toolbarEl.replaceWith(blurCallback(index, e.target.value));
   });
 
-  WrapperEl.appendChild(TextareaEl);
+  wrapperEl.appendChild(textareaEl);
 
   return {
-    content: WrapperEl,
+    content: wrapperEl,
     theme: "light",
     // delay: 200,
     trigger: "click",
@@ -67,7 +67,7 @@ export const getDescInputPopoverOptions = (index, data, node, blurCallback) => {
     // allowing you to hover over and click inside them.
     interactive: true,
     onShow() {
-      setTimeout(() => TextareaEl.focus());
+      setTimeout(() => textareaEl.focus());
     },
   };
 };
@@ -81,7 +81,7 @@ export const getDescInputPopoverOptions = (index, data, node, blurCallback) => {
  * @returns {Object} - tippy options
  */
 export const getExternalLinkPopoverOptions = (data, index, callback) => {
-  const WrapperEl = make("div", CSS.popover);
+  const wrapperEl = make("div", CSS.popover);
   const item = data.items[index] || {};
   let inputVal = "";
 
@@ -147,12 +147,12 @@ export const getExternalLinkPopoverOptions = (data, index, callback) => {
   InputEl.addEventListener("input", (e) => syncVal(e.target.value));
   InputEl.addEventListener("blur", (e) => syncVal(e.target.value));
 
-  WrapperEl.appendChild(InputWrapperEl);
-  WrapperEl.appendChild(NoteEl);
-  WrapperEl.appendChild(ErrorEl);
+  wrapperEl.appendChild(InputWrapperEl);
+  wrapperEl.appendChild(NoteEl);
+  wrapperEl.appendChild(ErrorEl);
 
   return {
-    content: WrapperEl,
+    content: wrapperEl,
     theme: "light",
     trigger: "click",
     placement: "bottom",

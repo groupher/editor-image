@@ -173,6 +173,8 @@
       position: relative;
       border: 1px solid transparent;
       padding: 2px;
+      box-sizing: border-box;
+      touch-action: none;
 
       &:hover {
         border: 1px dotted;
@@ -269,6 +271,7 @@
     text-align: center;
     color: grey;
     box-shadow: none;
+    margin-left: 4%;
 
     &[contentEditable="true"][data-placeholder]::before {
       position: absolute;
