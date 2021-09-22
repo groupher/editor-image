@@ -65,7 +65,7 @@
     display: flex;
     flex-wrap: wrap;
     width: 489px;
-    max-height: 489px;
+    /* max-height: 489px; */
     margin: 0 auto;
     padding: 45px 0;
   }
@@ -85,6 +85,7 @@
     &_image {
       width: 100%;
       height: 100%;
+      border-radius: 5px;
       object-fit: cover;
 
       &:hover {
@@ -104,6 +105,7 @@
       align-items: center;
       justify-content: center;
       height: 40px;
+      width: 100%;
       opacity: 0;
 
       background-image: linear-gradient(transparent, #272727);
