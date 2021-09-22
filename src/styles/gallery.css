@@ -73,7 +73,7 @@
   &__gallery_main_images {
     display: flex;
     width: 100%;
-    max-height: 400px;
+    /* max-height: 400px; */
     overflow-x: scroll;
     padding-bottom: 17px;
   }
