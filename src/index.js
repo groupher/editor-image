@@ -139,7 +139,7 @@ export default class ImageTool {
       items: [],
     };
 
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 8; i++) {
       this._data.items.push({
         index: i,
         src: TMP_PIC[i],
@@ -172,8 +172,7 @@ export default class ImageTool {
             this.onUpload({
               success: 1,
               file: {
-                url:
-                  "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1607332292931-c15ec25909b0?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=647&q=80",
+                url: "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1607332292931-c15ec25909b0?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=647&q=80",
               },
             });
           });
@@ -409,8 +408,7 @@ export default class ImageTool {
       this.onUpload({
         success: 1,
         file: {
-          url:
-            "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1607332292931-c15ec25909b0?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=647&q=80",
+          url: "https://rmt.dogedoge.com/fetch/~/source/unsplash/photo-1607332292931-c15ec25909b0?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=647&q=80",
         },
       });
     });
